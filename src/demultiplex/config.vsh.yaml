@@ -1,0 +1,37 @@
+name: demultiplex
+description: Demultiplexing of raw sequencing data
+argument_groups:
+  - name: Input arguments
+    arguments:
+      - name: --input
+        description: Directory containing raw sequencing data
+        type: file
+        required: true
+      - name: --sample_sheet
+        description: Sample sheet
+        type: file
+        required: true
+  - name: Output arguments
+    arguments:
+      - name: --output
+        description: Directory to write fastq data to
+        type: file
+        direction: output
+        required: true
+resources:
+  - type: nextflow_script
+    path: main.nf
+    entrypoint: run_wf
+
+dependencies:
+  - name: bcl_convert
+    repository: bb
+
+repositories:
+  - name: bb
+    type: vsh
+    repo: viash-hub/biobase
+    tag: viash-hub
+
+runners:
+  - type: nextflow
