@@ -31,7 +31,7 @@ repositories:
   - name: bb
     type: vsh
     repo: viash-hub/biobase
-    tag: viash-hub
+    tag: main
 
 runners:
   - type: nextflow
