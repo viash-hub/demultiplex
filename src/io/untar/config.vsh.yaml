@@ -34,3 +34,5 @@ test_resources:
 engines:
   - type: docker
     image: bash:latest
+runners:
+  - type: nextflow
