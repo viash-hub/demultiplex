@@ -1,0 +1,36 @@
+name: untar
+namespace: io
+description: |
+  Unpack a .tar file. When the contents of the .tar file is just a single directory,
+  put the contents of the directory into the output folder instead of that directory.
+argument_groups:
+  - name: Input arguments
+    arguments:
+      - name: --input
+        description: Tarball file to be unpacked.
+        type: file
+        required: true
+  - name: Output arguments
+    arguments:
+      - name: --output
+        description: Directory to write the contents of the .tar file to.
+        type: file
+        direction: output
+        required: true
+  - name: "Other arguments"
+    arguments:
+      - name: "--exclude"
+        alternatives: ["-e"]
+        type: string
+        description: Prevents any file or member whose name matches the shell wildcard (pattern) from being extracted.
+        example: "docs/figures"
+        required: false
+resources:
+  - type: bash_script
+    path: script.sh
+test_resources:
+  - type: bash_script
+    path: test.sh
+engines:
+  - type: docker
+    image: bash:latest
