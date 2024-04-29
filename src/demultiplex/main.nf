@@ -13,10 +13,11 @@ workflow run_wf {
           "input": "input",
         ],
         toState: { id, result, state ->
-          [output: result.output]
+          state + [ input: result.output ]
         },
       )
       // run bcl_convert
+      | view
       | bcl_convert.run(
           fromState: { id, state ->
             [

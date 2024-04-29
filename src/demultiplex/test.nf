@@ -8,8 +8,10 @@ workflow test_wf {
 
   output_ch = Channel.fromList([
         [
-          sample_sheet: resources_test.resolve("bcl_convert_samplesheet.csv"),
-          input: resources_test.resolve("iseq-DI/"),
+          // sample_sheet: resources_test.resolve("bcl_convert_samplesheet.csv"),
+          // input: resources_test.resolve("iseq-DI/"),
+          sample_sheet: resources_test.resolve("miseq_35147139_samplesheet.csv"),
+          input: resources_test.resolve("miseq_35147139.tar.gz"),
           publish_dir: "output_dir/",
         ]
       ])
