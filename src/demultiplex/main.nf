@@ -7,7 +7,8 @@ workflow run_wf {
       // untar input if needed
       | untar.run(
         runIf: {id, state -> 
-          state.input.toString().endsWith(".tar.gz") ? true : false
+          def inputStr = state.input.toString()
+          inputStr.endsWith(".tar.gz") || inputStr.endsWith(".tar") || inputStr.endsWith(".tgz") ? true : false
         },
         fromState: [
           "input": "input",
