@@ -4,14 +4,14 @@ set -eo pipefail
 
 extra_args=()
 
-
 # Check if tarball contains 1 top-level directory. If so, extract the contents of the
 # directory to the output directory instead of the directory itself.
 echo "Directory contents:"
-tar -taf "${par_input}" 
+tar -taf "${par_input}" > tar_contents.txt
+cat tar_contents.txt
 
 printf "Checking if tarball contains only a single top-level directory: "
-if [[ $(tar -taf ${par_input} | grep -o -E "^.*?\\/" | uniq | wc -l) -eq 1 ]]; then
+if [[ $(cat tar_contents | grep -o -E "^[./]*[^/]+/$" | uniq | wc -l) -eq 1 ]]; then
     echo "It does."
     echo "Extracting the contents of the top-level directory to the output directory instead of the directory itself."
     extra_args+=("--strip-components=1")

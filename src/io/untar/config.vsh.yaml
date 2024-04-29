@@ -33,6 +33,11 @@ test_resources:
     path: test.sh
 engines:
   - type: docker
-    image: bash:latest
+    image: alpine:latest
+    setup:
+      - type: apk
+        packages:
+          - bash
 runners:
+  - type: executable
   - type: nextflow
