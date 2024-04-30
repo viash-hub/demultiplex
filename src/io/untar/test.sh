@@ -8,6 +8,7 @@ TMPDIR=$(mktemp -d "$meta_temp_dir/$meta_functionality_name-XXXXXX")
 function clean_up {
   [[ -d "$TMPDIR" ]] && rm -r "$TMPDIR"
 }
+trap clean_up EXIT
 echo ">>> Created temporary directory '$TMPDIR'."
 
 INPUT_FILE="$TMPDIR/test_file.txt"
@@ -17,7 +18,7 @@ echo ">>> Created '$INPUT_FILE'."
 
 echo ">>> Creating tar.gz from '$INPUT_FILE'."
 TARFILE="${INPUT_FILE}.tar.gz"
-tar czvf ${INPUT_FILE}.tar.gz $(basename "$INPUT_FILE") -C "$TMPDIR"
+tar -C "$TMPDIR" -czvf ${INPUT_FILE}.tar.gz $(basename "$INPUT_FILE")
 [[ ! -f "$TARFILE" ]] && echo ">>> Test setup failed: could not create tarfile." && exit 1
 echo ">>> '$TARFILE' created."
 
@@ -50,7 +51,7 @@ echo ">>> Check whether excluded file was not extracted"
 echo ">>> Creating test tarball containing only 1 top-level directory."
 mkdir "$TMPDIR/input_test_3/"
 cp "$INPUT_FILE" "$TMPDIR/input_test_3/"
-tar czvf "$TMPDIR/input_test_3.tar.gz" $(basename "$TMPDIR/input_test_3") -C "$TMPDIR"
+tar -C "$TMPDIR" -czvf "$TMPDIR/input_test_3.tar.gz" $(basename "$TMPDIR/input_test_3")
 TARFILE_3="$TMPDIR/input_test_3.tar.gz"
 
 echo ">>> Creating temporary output directory for test 3."
@@ -64,6 +65,25 @@ echo "Extracting '$TARFILE_3' to '$OUTPUT_DIR_3'".
 
 echo ">>> Check whether extracted file exists"
 [[ ! -f "$OUTPUT_DIR_3/test_file.txt" ]] && echo "Output file could not be found!" && exit 1
+
+echo ">>> Check for tar archive that contains a single directory starting with './'."
+mkdir "$TMPDIR/input_test_4/"
+cp "$INPUT_FILE" "$TMPDIR/input_test_4/"
+
+pushd "$TMPDIR/" 
+trap popd ERR
+tar -czvf "$TMPDIR/input_test_4.tar.gz" ./input_test_4
+popd
+trap - ERR
+
+OUTPUT_DIR_4="$TMPDIR/output_test_4/"
+echo "Extracting '$TMPDIR/input_test_4.tar.gz' to '$OUTPUT_DIR_4'".
+./$meta_functionality_name \
+   --input "$TMPDIR/input_test_4.tar.gz" \
+   --output "$OUTPUT_DIR_4"
+
+echo ">>> Check whether extracted file exists"
+[[ ! -f "$OUTPUT_DIR_4/test_file.txt" ]] && echo "Output file could not be found!" && exit 1
 
 echo ">>> Creating test tarball containing only 1 top-level directory, but it is nested."
 mkdir -p "$TMPDIR/input_test_5/nested/"
