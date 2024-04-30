@@ -33,11 +33,4 @@ test_resources:
     path: test.sh
 engines:
   - type: docker
-    image: alpine:latest
-    setup:
-      - type: apk
-        packages:
-          - bash
-runners:
-  - type: executable
-  - type: nextflow
+    image: debian:stable-slim
