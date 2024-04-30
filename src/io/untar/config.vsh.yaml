@@ -33,8 +33,4 @@ test_resources:
     path: test.sh
 engines:
   - type: docker
-    image: alpine:latest
-    setup:
-      - type: apk
-        packages:
-          - bash
+    image: debian:stable-slim
