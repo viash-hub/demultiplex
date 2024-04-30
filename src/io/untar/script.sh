@@ -11,7 +11,7 @@ echo "Directory contents:"
 tar -taf "${par_input}" 
 
 printf "Checking if tarball contains only a single top-level directory: "
-if [[ $(tar -taf ${par_input} | grep -o -E "^.*?\\/" | uniq | wc -l) -eq 1 ]]; then
+if [[ $(tar -taf ${par_input} | grep -o -E '^[./]*[^/]+/$' | uniq | wc -l) -eq 1 ]]; then
     echo "It does."
     echo "Extracting the contents of the top-level directory to the output directory instead of the directory itself."
     extra_args+=("--strip-components=1")
