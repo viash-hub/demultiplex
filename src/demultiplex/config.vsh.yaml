@@ -29,6 +29,8 @@ test_resources:
     entrypoint: test_wf
 
 dependencies:
+  - name: io/untar
+    repository: local
   - name: bcl_convert
     repository: bb
 

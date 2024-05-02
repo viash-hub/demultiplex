@@ -3,13 +3,12 @@ nextflow.enable.dsl=2
 include { demultiplex } from params.rootDir + "/target/nextflow/demultiplex/main.nf"
 
 workflow test_wf {
-  // allow changing the resources_test dir
-  resources_test = file("${params.rootDir}/testData")
-
   output_ch = Channel.fromList([
         [
-          sample_sheet: resources_test.resolve("bcl_convert_samplesheet.csv"),
-          input: resources_test.resolve("iseq-DI/"),
+          // sample_sheet: resources_test.resolve("bcl_convert_samplesheet.csv"),
+          // input: resources_test.resolve("iseq-DI/"),
+          sample_sheet: "https://raw.githubusercontent.com/nf-core/test-datasets/demultiplex/testdata/NovaSeq6000/SampleSheet.csv",
+          input: "https://raw.githubusercontent.com/nf-core/test-datasets/demultiplex/testdata/NovaSeq6000/200624_A00834_0183_BHMTFYDRXX.tar.gz",
           publish_dir: "output_dir/",
         ]
       ])
