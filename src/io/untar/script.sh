@@ -17,7 +17,7 @@ tar -taf "${par_input}" > "$TMPDIR/tar_contents.txt"
 cat "$TMPDIR/tar_contents.txt"
 
 printf "Checking if tarball contains only a single top-level directory: "
-if [[ $(grep -o -E "^.*?\\/" "$TMPDIR/tar_contents.txt" | uniq | wc -l) -eq 1 ]]; then
+if [[ $(grep -o -E '^[./]*[^/]+/$' "$TMPDIR/tar_contents.txt" | uniq | wc -l) -eq 1 ]]; then
     echo "It does."
     echo "Extracting the contents of the top-level directory to the output directory instead of the directory itself."
     # The directory can be both of the format './<directory>' (or ././<directory>) or just <directory>
