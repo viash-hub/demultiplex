@@ -85,4 +85,42 @@ echo "Extracting '$TMPDIR/input_test_4.tar.gz' to '$OUTPUT_DIR_4'".
 echo ">>> Check whether extracted file exists"
 [[ ! -f "$OUTPUT_DIR_4/test_file.txt" ]] && echo "Output file could not be found!" && exit 1
 
+echo ">>> Creating test tarball containing only 1 top-level directory, but it is nested."
+mkdir -p "$TMPDIR/input_test_5/nested/"
+cp "$INPUT_FILE" "$TMPDIR/input_test_5/nested/"
+tar -C "$TMPDIR" -czvf "$TMPDIR/input_test_5.tar.gz" $(basename "$TMPDIR/input_test_5")
+TARFILE_5="$TMPDIR/input_test_5.tar.gz"
+
+echo ">>> Creating temporary output directory for test 5."
+OUTPUT_DIR_5="$TMPDIR/output_test_5/"
+mkdir "$OUTPUT_DIR_5"
+
+echo "Extracting '$TARFILE_5' to '$OUTPUT_DIR_5'".
+./$meta_functionality_name \
+   --input "$TARFILE_5" \
+   --output "$OUTPUT_DIR_5"
+
+echo ">>> Check whether extracted file exists"
+[[ ! -f "$OUTPUT_DIR_5/nested/test_file.txt" ]] && echo "Output file could not be found!" && exit 1
+
+echo ">>> Creating test tarball containing two top-level directories."
+mkdir -p "$TMPDIR/input_test_6/number_1/"
+mkdir "$TMPDIR/input_test_6/number_2/"
+cp "$INPUT_FILE" "$TMPDIR/input_test_6/number_1/"
+tar -C "$TMPDIR" -czvf "$TMPDIR/input_test_6.tar.gz" $(basename "$TMPDIR/input_test_6")
+TARFILE_6="$TMPDIR/input_test_6.tar.gz"
+
+echo ">>> Creating temporary output directory for test 6."
+OUTPUT_DIR_6="$TMPDIR/output_test_6/"
+mkdir "$OUTPUT_DIR_6"
+
+echo "Extracting '$TARFILE_6' to '$OUTPUT_DIR_6'".
+./$meta_functionality_name \
+   --input "$TARFILE_6" \
+   --output "$OUTPUT_DIR_6"
+
+echo ">>> Check whether extracted file exists"
+[[ ! -f "$OUTPUT_DIR_6/number_1/test_file.txt" ]] && echo "Output file could not be found!" && exit 1
+[[ ! -d "$OUTPUT_DIR_6/number_2" ]] && echo "Output directory could not be found!" && exit 1
+
 echo ">>> Test finished successfully"
