@@ -18,7 +18,6 @@ workflow run_wf {
         },
       )
       // run bcl_convert
-      | view
       | bcl_convert.run(
           fromState: { id, state ->
             [
