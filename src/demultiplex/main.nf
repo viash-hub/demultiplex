@@ -8,7 +8,9 @@ workflow run_wf {
       | untar.run(
         runIf: {id, state ->
           def inputStr = state.input.toString()
-          inputStr.endsWith(".tar.gz") || inputStr.endsWith(".tar") || inputStr.endsWith(".tgz") ? true : false
+          inputStr.endsWith(".tar.gz") || \
+          inputStr.endsWith(".tar") || \
+          inputStr.endsWith(".tgz") ? true : false
         },
         fromState: [
           "input": "input",
@@ -23,10 +25,12 @@ workflow run_wf {
             [
               "bcl_input_directory": state.input,
               "sample_sheet": state.sample_sheet,
-              "output_directory": "${state.output}/bclconvert",
+              "output_directory": "${state.output}",
             ]
           },
-          toState: { id, result, state -> state + [ "bclconvert_output" : result.output_directory ] }
+          toState: { id, result, state -> 
+            state + [ "output_bclconvert" : result.output_directory ] 
+          }
       )
       // Gather input files from BCL convert output folder
       | flatMap { id, state ->
@@ -57,24 +61,35 @@ workflow run_wf {
           if (start_parsing) {
             if ( !sample_id_column_index ) {
               sample_id_column_index = csv_items.findIndexValues{it == "Sample_ID"}
-              assert sample_id_column_index != -1: "Could not find column 'Sample_ID' in sample sheet!"
+              assert sample_id_column_index != -1: 
+              "Could not find column 'Sample_ID' in sample sheet!"
               return
             }
             samples += csv_items[sample_id_column_index]
           }
         }
-        println "Looking for fastq files in ${state.bclconvert_output}."
-        def allfastqs = files("${state.bclconvert_output}/*.fastq.gz")
+        println "Looking for fastq files in ${state.output_bclconvert}."
+        def allfastqs = files("${state.output_bclconvert}/*.fastq.gz")
         println "Found ${allfastqs.size()} fastq files."
         processed_samples = samples.collect { sample_id ->
-          def forward_fastq = files("${state.bclconvert_output}/${sample_id}_S[0-9]*_R1_00?.fastq.gz", type: 'file')
-          def reverse_fastq = files("${state.bclconvert_output}/${sample_id}_S[0-9]*_R2_00?.fastq.gz", type: 'file')
-          assert forward_fastq.size() < 2: "Found multiple forward fastq files corresponding to sample ${sample_id}."
-          assert reverse_fastq.size() < 2: "Found multiple reverse fastq files corresponding to sample ${sample_id}."
-          assert !forward_fastq.isEmpty(): "Expected a forward fastq file to have been created correspondig to sample ${sample_id}."
+          def forward_glob = "${sample_id}_S[0-9]*_R1_00?.fastq.gz"
+          def reverse_glob = "${sample_id}_S[0-9]*_R2_00?.fastq.gz" 
+          def forward_fastq = files("${state.output_bclconvert}/${forward_glob}", type: 'file')
+          def reverse_fastq = files("${state.output_bclconvert}/${reverse_glob}", type: 'file')
+          assert forward_fastq.size() < 2: 
+          "Found multiple forward fastq files corresponding to sample ${sample_id}."
+          assert reverse_fastq.size() < 2: 
+          "Found multiple reverse fastq files corresponding to sample ${sample_id}."
+          assert !forward_fastq.isEmpty(): 
+          "Expected a forward fastq file to have been created correspondig to sample ${sample_id}."
           // TODO: if one sample had reverse reads, the others must as well.
           reverse_fastq = !reverse_fastq.isEmpty() ? reverse_fastq[0] : null
-          [sample_id, ["fastq_forward": forward_fastq[0], "fastq_reverse": reverse_fastq, "run_id": original_id] + state]
+          def new_state = [
+            "fastq_forward": forward_fastq[0],
+            "fastq_reverse": reverse_fastq,
+            "run_id": original_id
+          ]
+          [sample_id, new_state + state]
         }
         return processed_samples
       }
@@ -96,7 +111,13 @@ workflow run_wf {
         // TODO: verify this
         def old_state = states[0]
         old_state.remove("sample_id")
-        return [run_id, old_state + ["forward_fastqs": forward_fastqs, "reverse_fastqs": reverse_fastqs, "sample_ids": sample_ids]]
+        
+        def keys_to_overwrite = [
+          "forward_fastqs": forward_fastqs,
+          "reverse_fastqs": reverse_fastqs,
+          "sample_ids": sample_ids,
+        ]
+        return [run_id, old_state + keys_to_overwrite]
 
       }
       | falco.run(
@@ -110,9 +131,9 @@ workflow run_wf {
             "data_filename": null,
           ]
         },
-        toState: { id, result, state -> state + [ "falco_output" : result.outdir ] },
+        toState: { id, result, state -> state + [ "output_falco" : result.outdir ] },
       )
-      | setState(["output"])
+      | setState(["output": "output_bclconvert", "output_falco": "output_falco"])
 
   emit:
     output_ch

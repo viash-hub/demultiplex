@@ -21,4 +21,8 @@ workflow test_wf {
         assert output.size() == 2 : "outputs should contain two elements; [id, file]"
         "Output: $output"
       }
+    | map {id, state ->
+      assert state.output.isDirectory(): "Expected bclconvert output to be a directory"
+      assert state.output_falco.isDirectory(): "Expected falco output to be a directory"
+    }
 }

@@ -17,7 +17,14 @@ argument_groups:
         description: Directory to write fastq data to
         type: file
         direction: output
-        required: true
+        required: false
+        default: "$id/fastq"
+      - name: "--output_falco"
+        description: Directory to write falco output to
+        type: file
+        direction: output
+        required: false
+        default: "$id/falco"
 resources:
   - type: nextflow_script
     path: main.nf
@@ -39,7 +46,6 @@ repositories:
   - name: bb
     type: vsh
     repo: viash-hub/biobase
-    tag: falco
 
 runners:
   - type: nextflow
