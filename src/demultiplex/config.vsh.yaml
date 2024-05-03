@@ -33,12 +33,13 @@ dependencies:
     repository: local
   - name: bcl_convert
     repository: bb
-
+  - name: falco
+    repository: bb
 repositories:
   - name: bb
     type: vsh
     repo: viash-hub/biobase
-    tag: main
+    tag: falco
 
 runners:
   - type: nextflow
