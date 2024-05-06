@@ -17,14 +17,19 @@ argument_groups:
         description: Directory to write fastq data to
         type: file
         direction: output
-        required: false
-        default: "$id/fastq"
+        required: true
       - name: "--output_falco"
         description: Directory to write falco output to
         type: file
         direction: output
         required: false
         default: "$id/falco"
+      - name: "--output_multiqc"
+        description: Directory to write falco output to
+        type: file
+        direction: output
+        required: false
+        default: "$id/multiqc"
 resources:
   - type: nextflow_script
     path: main.nf
@@ -41,6 +46,8 @@ dependencies:
   - name: bcl_convert
     repository: bb
   - name: falco
+    repository: bb
+  - name: multiqc
     repository: bb
 repositories:
   - name: bb
