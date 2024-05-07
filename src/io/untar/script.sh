@@ -36,6 +36,6 @@ fi
 
 echo "Starting extraction of tarball '$par_input' to output directory '$par_output'."
 mkdir -p "$par_output"
-echo "executing 'tar --directory=$par_output ${extra_args[@]} -xavf $par_input'"
-tar --directory="$par_output" ${extra_args[@]} -xavf "$par_input"
+echo "executing 'tar --no-same-owner --no-same-permissions --directory=$par_output ${extra_args[@]} -xavf $par_input'"
+tar --no-same-owner --no-same-permissions --directory="$par_output" ${extra_args[@]} -xavf "$par_input"
 
