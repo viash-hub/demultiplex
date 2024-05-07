@@ -56,7 +56,6 @@ workflow run_wf {
       )
 
     output_ch = samples_ch 
-      | view {"Before combine_samples: $it"}
       | combine_samples.run(
         fromState: { id, state ->
           [
