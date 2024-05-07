@@ -7,17 +7,11 @@ workflow split_samples_and_validate {
       // Gather input files from BCL convert output folder
       | flatMap { id, state ->
         println "Processing sample sheet: $state.sample_sheet"
-        def sample_sheet = file(state.sample_sheet.toAbsolutePath())
+        def sample_sheet = state.sample_sheet
         def start_parsing = false
         def sample_id_column_index = null
         def samples = ["Undetermined"]
         def original_id = id
-
-        // Gather reports file
-        def report_dir = files("${state.output_bclconvert}/Reports", type: "dir")
-        assert report_dir.size() == 1:
-        "Could not the Reports directory in the output from BCL convert."
-        report_dir = report_dir[0]
 
         // Parse sample sheet for sample IDs
         csv_lines = sample_sheet.splitCsv(header: false, sep: ',')
@@ -47,17 +41,18 @@ workflow split_samples_and_validate {
           }
         }
         println "Looking for fastq files in ${state.output_bclconvert}."
-        def allfastqs = files("${state.output_bclconvert}/*.fastq.gz")
-        println "Found ${allfastqs.size()} fastq files for the following samples: ${samples}."
+        def allfastqs = state.output_bclconvert.listFiles().findAll{it.isFile() && it.name ==~ /^.+\.fastq.gz$/}
+        println "Found ${allfastqs.size()} fastq files, matching them to the following samples: ${samples}."
         processed_samples = samples.collect { sample_id ->
-          def forward_glob = "${sample_id}_S[0-9]*_R1_00?.fastq.gz"
-          def reverse_glob = "${sample_id}_S[0-9]*_R2_00?.fastq.gz"
-          def forward_fastq = files("${state.output_bclconvert}/${forward_glob}", type: 'file')
-          def reverse_fastq = files("${state.output_bclconvert}/${reverse_glob}", type: 'file')
+          def forward_regex = ~/^${sample_id}_S(\d+)_(L(\d+)_)?R1_(\d+)\.fastq\.gz$/
+          def reverse_regex = ~/^${sample_id}_S(\d+)_(L(\d+)_)?R2_(\d+)\.fastq\.gz$/
+          def forward_fastq = state.output_bclconvert.listFiles().findAll{it.isFile() && it.name ==~ forward_regex}
+          def reverse_fastq = state.output_bclconvert.listFiles().findAll{it.isFile() && it.name ==~ reverse_regex}
+          assert forward_fastq : "No forward fastq files were found for sample ${sample_id}"
           assert forward_fastq.size() < 2:
-          "Found multiple forward fastq files corresponding to sample ${sample_id}."
+          "Found multiple forward fastq files corresponding to sample ${sample_id}: ${forward_fastq}"
           assert reverse_fastq.size() < 2:
-          "Found multiple reverse fastq files corresponding to sample ${sample_id}."
+          "Found multiple reverse fastq files corresponding to sample ${sample_id}: ${reverse_fastq}."
           assert !forward_fastq.isEmpty():
           "Expected a forward fastq file to have been created correspondig to sample ${sample_id}."
           // TODO: if one sample had reverse reads, the others must as well.
@@ -66,7 +61,6 @@ workflow split_samples_and_validate {
             "fastq_forward": forward_fastq[0],
             "fastq_reverse": reverse_fastq,
             "run_id": original_id,
-            "bclconvert_reports": report_dir,
           ]
           def newState = bcl_convert_output_state + state
           [sample_id, newState]
@@ -156,7 +150,11 @@ workflow run_wf {
             ]
           },
           toState: { id, result, state ->
-            state + [ "output_bclconvert" : result.output_directory ]
+            def newState = [
+              "output_bclconvert" : result.output_directory,
+              "bclconvert_reports": result.reports,
+            ]
+            state + newState
           }
       )
       | split_samples_and_validate
