@@ -43,6 +43,10 @@ test_resources:
 dependencies:
   - name: io/untar
     repository: local
+  - name: dataflow/gather_fastqs_and_validate
+    repository: local
+  - name: dataflow/combine_samples
+    repository: local
   - name: bcl_convert
     repository: bb
   - name: falco

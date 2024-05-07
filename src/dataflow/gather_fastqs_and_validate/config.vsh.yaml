@@ -1,0 +1,36 @@
+name: gather_fastqs_and_validate
+namespace: dataflow
+description: |
+  From a directory containing fastq files, gather the files per sample 
+  and validate according to the contents of the sample sheet.
+argument_groups:
+  - name: Input arguments
+    arguments:
+      - name: --input
+        description: Directory containing .fastq files
+        type: file
+        required: true
+      - name: --sample_sheet
+        description: Sample sheet
+        type: file
+        required: true
+  - name: Output arguments
+    arguments:
+      - name: --fastq_forward
+        type: file
+        direction: output
+        required: true
+      - name: "--fastq_reverse"
+        type: file
+        direction: output
+        required: false
+resources:
+  - type: nextflow_script
+    path: main.nf
+    entrypoint: run_wf
+
+runners:
+  - type: nextflow
+
+engines:
+  - type: native
