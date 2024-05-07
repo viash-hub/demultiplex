@@ -24,5 +24,6 @@ workflow test_wf {
     | map {id, state ->
       assert state.output.isDirectory(): "Expected bclconvert output to be a directory"
       assert state.output_falco.isDirectory(): "Expected falco output to be a directory"
+      assert state.output_multiqc.isFile(): "Expected multiQC output to be a file"
     }
 }
