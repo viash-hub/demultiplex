@@ -29,7 +29,7 @@ argument_groups:
         type: file
         direction: output
         required: false
-        default: "$id/multiqc"
+        default: "$id/multiqc_report.html"
 resources:
   - type: nextflow_script
     path: main.nf
