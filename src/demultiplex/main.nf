@@ -1,47 +1,9 @@
-workflow run_wf {
+workflow split_samples_and_validate {
   take:
     input_ch
 
   main:
-    samples_ch = input_ch
-      // untar input if needed
-      | untar.run(
-        runIf: {id, state ->
-          def inputStr = state.input.toString()
-          inputStr.endsWith(".tar.gz") || \
-          inputStr.endsWith(".tar") || \
-          inputStr.endsWith(".tgz") ? true : false
-        },
-        fromState: [
-          "input": "input",
-        ],
-        toState: { id, result, state ->
-          def newState = state + ["input": result.output]
-          newState
-        },
-      )
-      // Gather input files from folder
-      | map {id, state ->
-        // Get InterOp folder
-        // TODO: check if InterOp folder is empty
-        def interop_dir = files("${state.input}/InterOp/", type: 'dir')
-        def newState = state + ["interop_dir": interop_dir]
-        [id, newState]
-      }
-
-      // run bcl_convert
-      | bcl_convert.run(
-          fromState: { id, state ->
-            [
-              "bcl_input_directory": state.input,
-              "sample_sheet": state.sample_sheet,
-              "output_directory": "${state.output}",
-            ]
-          },
-          toState: { id, result, state ->
-            state + [ "output_bclconvert" : result.output_directory ]
-          }
-      )
+    output_ch = input_ch
       // Gather input files from BCL convert output folder
       | flatMap { id, state ->
         println "Processing sample sheet: $state.sample_sheet"
@@ -113,8 +75,18 @@ workflow run_wf {
         return processed_samples
       }
 
-    output_ch = samples_ch
-      // Going back to run-level, set the run ID back to the first element so we can use groupTuple
+  emit:
+    output_ch
+}
+
+
+workflow combine_samples {
+  take:
+    input_ch
+
+  main:
+    output_ch = input_ch
+    // Going back to run-level, set the run ID back to the first element so we can use groupTuple
       // Using toSortedList will not work when multiple runs are being processed at the same time.
       | map { id, state ->
         def newEvent = [state.run_id, state + ["sample_id": id]]
@@ -138,6 +110,60 @@ workflow run_wf {
         ]
         return [run_id, old_state + keys_to_overwrite]
       }
+
+  emit:
+    output_ch
+
+}
+
+workflow run_wf {
+  take:
+    input_ch
+
+  main:
+    samples_ch = input_ch
+      // untar input if needed
+      | untar.run(
+        runIf: {id, state ->
+          def inputStr = state.input.toString()
+          inputStr.endsWith(".tar.gz") || \
+          inputStr.endsWith(".tar") || \
+          inputStr.endsWith(".tgz") ? true : false
+        },
+        fromState: [
+          "input": "input",
+        ],
+        toState: { id, result, state ->
+          state + ["input": result.output]
+        },
+      )
+      // Gather input files from folder
+      | map {id, state ->
+        // Get InterOp folder
+        // TODO: check if InterOp folder is empty
+        def interop_dir = files("${state.input}/InterOp/", type: 'dir')
+        def newState = state + ["interop_dir": interop_dir]
+        [id, newState]
+      }
+
+      // run bcl_convert
+      | bcl_convert.run(
+          fromState: { id, state ->
+            [
+              "bcl_input_directory": state.input,
+              "sample_sheet": state.sample_sheet,
+              "output_directory": "${state.output}",
+            ]
+          },
+          toState: { id, result, state ->
+            state + [ "output_bclconvert" : result.output_directory ]
+          }
+      )
+      | split_samples_and_validate
+
+
+    output_ch = samples_ch
+      | combine_samples
       | falco.run(
         fromState: {id, state ->
           reverse_fastqs_list = state.reverse_fastqs ? state.reverse_fastqs : []
@@ -150,8 +176,7 @@ workflow run_wf {
           ]
         },
         toState: { id, result, state ->
-          def newState = state + [ "output_falco" : result.outdir ]
-          return newState
+          state + [ "output_falco" : result.outdir ]
         },
       )
       | multiqc.run(
@@ -160,16 +185,19 @@ workflow run_wf {
             "input": [state.output_falco, state.interop_dir],
             "output_report": state.output_multiqc,
             "cl_config": 'sp: {fastqc/data: {fn: "*_fastqc_data.txt"}}',
-            "strict": true
           ]
         },
         toState: { id, result, state ->
-          def newState = state + [ "output_multiqc" : result.output_report ]
-          return newState
+          state + [ "output_multiqc" : result.output_report ]
         },
       )
-      | view {"After multiqc: $it"}
-      | setState(["output": "output_bclconvert", "output_falco": "output_falco", "output_multiqc": "output_multiqc"])
+      | setState(
+        [
+          "output": "output_bclconvert",
+          "output_falco": "output_falco",
+          "output_multiqc": "output_multiqc"
+        ]
+      )
 
   emit:
     output_ch
