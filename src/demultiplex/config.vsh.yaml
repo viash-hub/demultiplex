@@ -47,6 +47,8 @@ dependencies:
     repository: local
   - name: dataflow/gather_fastqs_and_validate
     repository: local
+  - name: io/interop_summary_to_csv
+    repository: local
   - name: dataflow/combine_samples
     repository: local
   - name: bcl_convert

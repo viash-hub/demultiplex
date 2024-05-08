@@ -28,13 +28,24 @@ workflow run_wf {
           newState["sample_sheet"] = sample_sheet
         }
 
+        // Do not add InterOp to state because we generate the summary csv's in the next
+        // step based on the run dir, not the InterOp dir.
         def interop_dir = state.input.resolve("InterOp")
         assert interop_dir.isDirectory(): "Expected InterOp directory to be present."
-        newState["interop_dir"] = interop_dir
+
         def resultState = state + newState
         [id, resultState]
       }
 
+      | interop_summary_to_csv.run(
+        fromState: [
+          "input": "input", 
+        ],
+        toState: [
+          "interop_run_summary": "output_run_summary",
+          "interop_index_summary": "output_index_summary",
+        ]
+      )
       // run bcl_convert
       | bcl_convert.run(
         fromState: [
@@ -95,7 +106,11 @@ workflow run_wf {
       | multiqc.run(
         fromState: {id, state ->
           [
-            "input": [state.output_falco, state.interop_dir],
+            "input": [
+              state.output_falco,
+              state.interop_run_summary.getParent(),
+              state.interop_index_summary.getParent()
+            ],
             "output_report": state.output_multiqc,
             "cl_config": 'sp: {fastqc/data: {fn: "*_fastqc_data.txt"}}',
           ]
