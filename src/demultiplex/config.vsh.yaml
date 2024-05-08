@@ -8,9 +8,11 @@ argument_groups:
         type: file
         required: true
       - name: --sample_sheet
-        description: Sample sheet
+        description: |
+          Sample sheet as input for BCL Convert. If not specified,
+          will try to autodetect the sample sheet in the input directory
         type: file
-        required: true
+        required: false
   - name: Output arguments
     arguments:
       - name: --output

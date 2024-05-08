@@ -21,10 +21,18 @@ workflow run_wf {
       )
       // Gather input files from folder
       | map {id, state ->
+        def newState = [:]
+        if (!state.sample_sheet) {
+          def sample_sheet = state.input.resolve("SampleSheet.csv")
+          assert (sample_sheet && sample_sheet.isFile()): "Could not find 'SampleSheet.csv' file in input directory."
+          newState["sample_sheet"] = sample_sheet
+        }
+
         def interop_dir = state.input.resolve("InterOp")
         assert interop_dir.isDirectory(): "Expected InterOp directory to be present."
-        def newState = state + ["interop_dir": interop_dir]
-        [id, newState]
+        newState["interop_dir"] = interop_dir
+        def resultState = state + newState
+        [id, resultState]
       }
 
       // run bcl_convert
