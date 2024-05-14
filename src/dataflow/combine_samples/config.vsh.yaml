@@ -1,0 +1,38 @@
+name: combine_samples
+namespace: dataflow
+description: Combine fastq files from across samples into one event with a list of fastq files per orientation.
+argument_groups:
+  - name: Input arguments
+    arguments:
+      - name: "--id"
+        description: "ID of the new event"
+        type: string
+        required: true
+      - name: --forward_input
+        type: file
+        required: true
+      - name: --reverse_input
+        type: file
+        required: false
+  - name: Output arguments
+    arguments:
+      - name: --output_forward
+        type: file
+        direction: output
+        multiple: true
+        required: true
+      - name: --output_reverse
+        type: file
+        direction: output
+        multiple: true
+        required: false
+resources:
+  - type: nextflow_script
+    path: main.nf
+    entrypoint: run_wf
+
+runners:
+  - type: nextflow
+
+engines:
+  - type: native

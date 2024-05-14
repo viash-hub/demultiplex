@@ -1,0 +1,41 @@
+name: interop_summary_to_csv
+namespace: io
+argument_groups:
+  - name: Input arguments
+    arguments:
+      - name: --input
+        description: Sequencing run folder (*not* InterOp folder).
+        type: file
+        required: true
+  - name: Output arguments
+    arguments:
+      - name: --output_run_summary
+        type: file
+        direction: output
+        required: true
+      - name: --output_index_summary
+        type: file
+        direction: output
+        required: true
+requirements:
+  - commands: ["summary", "index-summary"]
+resources:
+  - type: bash_script
+    path: script.sh
+engines:
+  - type: docker
+    image: debian:stable-slim
+    setup:
+      - type: apt
+        packages:
+          - procps
+          - wget
+      - type: docker
+        run: |
+          wget https://github.com/Illumina/interop/releases/download/v1.3.1/interop-1.3.1-Linux-GNU.tar.gz -O /tmp/interop.tar.gz && \
+          tar -C /tmp/ --no-same-owner --no-same-permissions -xvf /tmp/interop.tar.gz && \
+          mv /tmp/interop-1.3.1-Linux-GNU/bin/index-summary /tmp/interop-1.3.1-Linux-GNU/bin/summary /usr/local/bin/
+
+runners:
+  - type: executable
+  - type: nextflow

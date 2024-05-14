@@ -8,9 +8,11 @@ argument_groups:
         type: file
         required: true
       - name: --sample_sheet
-        description: Sample sheet
+        description: |
+          Sample sheet as input for BCL Convert. If not specified,
+          will try to autodetect the sample sheet in the input directory
         type: file
-        required: true
+        required: false
   - name: Output arguments
     arguments:
       - name: --output
@@ -18,6 +20,18 @@ argument_groups:
         type: file
         direction: output
         required: true
+      - name: "--output_falco"
+        description: Directory to write falco output to
+        type: file
+        direction: output
+        required: false
+        default: "$id/falco"
+      - name: "--output_multiqc"
+        description: Directory to write falco output to
+        type: file
+        direction: output
+        required: false
+        default: "$id/multiqc_report.html"
 resources:
   - type: nextflow_script
     path: main.nf
@@ -31,14 +45,22 @@ test_resources:
 dependencies:
   - name: io/untar
     repository: local
+  - name: dataflow/gather_fastqs_and_validate
+    repository: local
+  - name: io/interop_summary_to_csv
+    repository: local
+  - name: dataflow/combine_samples
+    repository: local
   - name: bcl_convert
     repository: bb
-
+  - name: falco
+    repository: bb
+  - name: multiqc
+    repository: bb
 repositories:
   - name: bb
     type: vsh
     repo: viash-hub/biobase
-    tag: main
 
 runners:
   - type: nextflow
