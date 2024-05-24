@@ -1,4 +1,5 @@
 name: demultiplex.vsh
+version: v0.1.0
 description: |
   Demultiplexing pipeline
 license: MIT
@@ -11,3 +12,4 @@ viash_version: 0.9.0-RC3
 
 config_mods: |
   .requirements.commands := ['ps']
+
