@@ -1,5 +1,5 @@
 name: demultiplex.vsh
-version: v0.1.0
+version: v0.1.1
 description: |
   Demultiplexing pipeline
 license: MIT
