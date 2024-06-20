@@ -60,7 +60,7 @@ dependencies:
 repositories:
   - name: bb
     type: vsh
-    repo: viash-hub/biobase
+    repo: viash-hub/biobox
     tag: v0.1.0
 
 runners:

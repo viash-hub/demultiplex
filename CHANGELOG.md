@@ -1,3 +1,9 @@
+# 0.1.2
+
+## NEW FEATURES
+
+* Renamed `biobase` repository to `biobox` (PR #).
+
 # v0.1.1
 
 ## NEW FEATURES
