@@ -2,7 +2,7 @@
 
 ## NEW FEATURES
 
-* Renamed `biobase` repository to `biobox` (PR #13).
+* Renamed `biobase` repository to `biobox` (PR #13 and PR #15).
 
 * Bump viash to 0.9.0-RC6 (PR #14).
 
