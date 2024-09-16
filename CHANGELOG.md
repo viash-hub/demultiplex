@@ -1,4 +1,4 @@
-# Unreleased
+# demultiplex v0.1.1
 
 ## Minor updates
 
@@ -8,6 +8,6 @@
 
 * Renamed `biobase` repository to `biobox` (PR #13 and PR #15).
 
-# v0.1.0
+# demultiplex v0.1.0
 
 Initial release
