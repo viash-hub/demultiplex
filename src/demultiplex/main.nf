@@ -126,6 +126,13 @@ workflow run_wf {
           ]
         ]
       )
+      | setState(
+        [
+          "output": "output_bclconvert",
+          "output_falco": "output_falco",
+          "output_multiqc": "output_multiqc"
+         ]
+       )
 
   emit:
     output_ch
