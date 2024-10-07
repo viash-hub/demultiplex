@@ -17,7 +17,7 @@ workflow run_wf {
         ],
         toState: { id, result, state ->
           state + ["input": result.output]
-        },
+        }
       )
       // Gather input files from folder
       | map {id, state ->
@@ -120,17 +120,10 @@ workflow run_wf {
         },
         directives: [
           publishDir: [
-            path: "$params.publish_dir/my_foo/abc/def/",
+            path: "${params.publish_dir}/my_foo/abc/def/",
             overwrite: false,
             mode: "copy"
-        ]
-      )
-      | niceView()
-      | setState(
-        [
-          "output": "output_bclconvert",
-          "output_falco": "output_falco",
-          "output_multiqc": "output_multiqc"
+          ]
         ]
       )
 
