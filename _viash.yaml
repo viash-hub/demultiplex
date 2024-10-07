@@ -8,8 +8,8 @@ links:
   repository: https://github.com/viash-hub/demultiplex
 info:
   test_resources:
-    - path: https://raw.githubusercontent.com/nf-core/test-datasets/demultiplex/testdata/NovaSeq6000/200624_A00834_0183_BHMTFYDRXX.tar.gz
-      dest: test_resources
+    - path: gs://viash-hub-test-data/demultiplex/v2/
+      dest: testData
 
 viash_version: 0.9.0
 
