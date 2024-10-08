@@ -13,4 +13,5 @@ nextflow run . \
   -profile docker,no_publish \
   -entry test_wf \
   -c src/config/tests.config \
+  --resources_test https://raw.githubusercontent.com/nf-core/test-datasets/demultiplex/testdata/NovaSeq6000/ \
   -resume
