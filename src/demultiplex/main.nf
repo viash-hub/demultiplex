@@ -1,3 +1,5 @@
+def date = new Date().format('yyyyMMdd_hhmmss')
+
 workflow run_wf {
   take:
     input_ch
@@ -48,11 +50,15 @@ workflow run_wf {
       )
       // run bcl_convert
       | bcl_convert.run(
-        fromState: [
-          "bcl_input_directory": "input",
-          "sample_sheet": "sample_sheet",
-          "output_directory": "output",
-        ],
+        fromState: { id, state ->
+          [
+            bcl_input_directory: state.input,
+            sample_sheet: state.sample_sheet,
+            output_directory: state.output,
+            reports: "reports",
+            logs: "logs"
+          ]
+        },
         toState: {id, result, state -> 
           def toAdd = [
             "output_bclconvert" : result.output_directory,
@@ -61,7 +67,14 @@ workflow run_wf {
           ]
           def newState = state + toAdd
           return newState
-        }
+        },
+        directives: [
+          publishDir: [
+            path: "${params.publish_dir}/${date}/",
+            overwrite: false,
+            mode: "copy"
+          ]
+        ]
       )
       | gather_fastqs_and_validate.run(
         fromState: [
@@ -102,6 +115,13 @@ workflow run_wf {
         toState: { id, result, state ->
           state + [ "output_falco" : result.outdir ]
         },
+        directives: [
+          publishDir: [
+            path: "${params.publish_dir}/${date}/",
+            overwrite: false,
+            mode: "copy"
+          ]
+        ]
       )
       | multiqc.run(
         fromState: {id, state ->
@@ -112,12 +132,21 @@ workflow run_wf {
               state.interop_index_summary.getParent()
             ],
             "output_report": state.output_multiqc,
+            "output_data": null,
+            "output_plots": null,
             "cl_config": 'sp: {fastqc/data: {fn: "*_fastqc_data.txt"}}',
           ]
         },
         toState: { id, result, state ->
           state + [ "output_multiqc" : result.output_report ]
         },
+        directives: [
+          publishDir: [
+            path: "${params.publish_dir}/${date}",
+            overwrite: false,
+            mode: "copy"
+          ]
+        ]
       )
       | setState(
         [
