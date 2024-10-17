@@ -67,14 +67,7 @@ workflow run_wf {
           ]
           def newState = state + toAdd
           return newState
-        },
-        //directives: [
-        //  publishDir: [
-        //    path: "${params.publish_dir}/${date}/",
-        //    overwrite: false,
-        //    mode: "copy"
-        //  ]
-        //]
+        }
       )
       | gather_fastqs_and_validate.run(
         fromState: [
@@ -114,14 +107,7 @@ workflow run_wf {
         },
         toState: { id, result, state ->
           state + [ "output_falco" : result.outdir ]
-        },
-        //directives: [
-        //  publishDir: [
-        //    path: "${params.publish_dir}/${date}/",
-        //    overwrite: false,
-        //    mode: "copy"
-        //  ]
-        //]
+        }
       )
       | multiqc.run(
         fromState: {id, state ->
@@ -139,14 +125,7 @@ workflow run_wf {
         },
         toState: { id, result, state ->
           state + [ "output_multiqc" : result.output_report ]
-        },
-        //directives: [
-        //  publishDir: [
-        //    path: "${params.publish_dir}/${date}",
-        //    overwrite: false,
-        //    mode: "copy"
-        //  ]
-        //]
+        }
       )
       | setState(
         [
