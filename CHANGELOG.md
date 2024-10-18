@@ -1,3 +1,19 @@
+# demultiplex v0.2.x
+
+## Major updates
+The outflow of the workflow has been refactored and the (Viash) default approach for publishing artifacts has been overridden.
+
+The output structure is now:
+
+- `<publish_dir>/<data-time-stamp>/`
+- Two sub-directories:
+  - `fastq`
+  - `qc` for the reports:
+    - `multiqc_report.html`
+    - `fastqc/` directory containing the different fastqc (falco) reports.
+- Example date-time stamp: `240322_143020`
+
+
 # demultiplex v0.1.1
 
 ## Minor updates
