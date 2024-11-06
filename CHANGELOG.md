@@ -1,3 +1,9 @@
+# demultiplex v0.1.2
+
+## Minor updates
+
+* Add resource labels to workflows (PR #21).
+
 # demultiplex v0.1.1
 
 ## Minor updates
