@@ -6,6 +6,7 @@ workflow run_wf {
     samples_ch = input_ch
       // untar input if needed
       | untar.run(
+        directives: [label: ["lowmem", "lowcpu"]],
         runIf: {id, state ->
           def inputStr = state.input.toString()
           inputStr.endsWith(".tar.gz") || \
@@ -38,6 +39,7 @@ workflow run_wf {
       }
 
       | interop_summary_to_csv.run(
+        directives: [label: ["lowmem", "verylowcpu"]],
         fromState: [
           "input": "input", 
         ],
@@ -48,6 +50,7 @@ workflow run_wf {
       )
       // run bcl_convert
       | bcl_convert.run(
+        directives: [label: ["highmem", "midcpu"]],
         fromState: [
           "bcl_input_directory": "input",
           "sample_sheet": "sample_sheet",
@@ -89,6 +92,7 @@ workflow run_wf {
         ]
       )
       | falco.run(
+        directives: [label: ["lowcpu", "lowmem"]],
         fromState: {id, state ->
           reverse_fastqs_list = state.reverse_fastqs ? state.reverse_fastqs : []
           [
@@ -104,6 +108,7 @@ workflow run_wf {
         },
       )
       | multiqc.run(
+        directives: [label: ["lowcpu", "lowmem"]],
         fromState: {id, state ->
           [
             "input": [
