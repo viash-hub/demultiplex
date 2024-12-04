@@ -1,5 +1,9 @@
 # demultiplex v0.1.2
 
+## New features
+
+* Add support for `bases2fastq` demultiplexer (PR #24)
+
 ## Minor updates
 
 * Add resource labels to workflows (PR #21).
