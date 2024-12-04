@@ -1,5 +1,9 @@
 # demultiplex v0.1.2
 
+## Breaking changes
+
+* `demultiplex` workflow: renamed `sample_sheet` argument to `run_information` (PR #24)
+
 ## New features
 
 * Add support for `bases2fastq` demultiplexer (PR #24)

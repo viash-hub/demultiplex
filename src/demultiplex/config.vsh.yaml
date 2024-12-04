@@ -9,7 +9,9 @@ argument_groups:
         required: true
       - name: --run_information
         description: |
-          Sample sheet as input for BCL Convert. If not specified,
+          CSV file containing sample information, which will be used as 
+          input for the demultiplexer. Canonically called 'SampleSheet.csv' (Illumina)
+          or 'RunManifest.csv' (Element Biosciences). If not specified,
           will try to autodetect the sample sheet in the input directory.
           Requires --demultiplexer to be set.
         type: file
