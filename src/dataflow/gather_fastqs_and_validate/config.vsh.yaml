@@ -20,10 +20,12 @@ argument_groups:
         type: file
         direction: output
         required: true
+        multiple: true
       - name: "--fastq_reverse"
         type: file
         direction: output
         required: false
+        multiple: true
 resources:
   - type: nextflow_script
     path: main.nf

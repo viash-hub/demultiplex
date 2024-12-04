@@ -11,7 +11,14 @@ viash ns build --setup cb
 nextflow run . \
   -main-script src/demultiplex/test.nf \
   -profile docker,no_publish,local \
-  -entry test_wf \
+  -entry test_illumina \
   -c src/config/labels.config \
   --resources_test https://raw.githubusercontent.com/nf-core/test-datasets/demultiplex/testdata/NovaSeq6000/ \
+  -resume
+
+ nextflow run . \
+  -main-script src/demultiplex/test.nf \
+  -profile docker,no_publish,local \
+  -entry test_bases2fastq \
+  -c src/config/labels.config \
   -resume

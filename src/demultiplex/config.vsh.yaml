@@ -7,12 +7,22 @@ argument_groups:
         description: Directory containing raw sequencing data
         type: file
         required: true
-      - name: --sample_sheet
+      - name: --run_information
         description: |
           Sample sheet as input for BCL Convert. If not specified,
-          will try to autodetect the sample sheet in the input directory
+          will try to autodetect the sample sheet in the input directory.
+          Requires --demultiplexer to be set.
         type: file
         required: false
+      - name: "--demultiplexer"
+        type: string
+        required: false
+        choices: ["bases2fastq", "bclconvert"]
+        description: |
+          Demultiplexer to use, choice depends on the provider
+          of the instrument that was used to generate the data.
+          When not using --sample_sheet, specifying this argument is not
+          required.
   - name: Output arguments
     arguments:
       - name: --output
@@ -40,7 +50,10 @@ resources:
 test_resources:
   - type: nextflow_script
     path: test.nf
-    entrypoint: test_wf
+    entrypoint: test_illumina
+  - type: nextflow_script
+    path: test.nf
+    entrypoint: test_bases2fastq
 
 dependencies:
   - name: io/untar
@@ -53,6 +66,8 @@ dependencies:
     repository: local
   - name: bcl_convert
     repository: bb
+  - name: bases2fastq
+    repository: bb
   - name: falco
     repository: bb
   - name: multiqc
@@ -61,7 +76,7 @@ repositories:
   - name: bb
     type: vsh
     repo: biobox
-    tag: v0.2.0
+    tag: v0.3.0
 
 runners:
   - type: nextflow
