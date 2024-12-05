@@ -1,4 +1,4 @@
-# demultiplex v0.1.2
+# demultiplex v0.2.0
 
 ## Breaking changes
 
