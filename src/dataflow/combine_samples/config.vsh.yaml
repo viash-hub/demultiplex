@@ -11,9 +11,11 @@ argument_groups:
       - name: --forward_input
         type: file
         required: true
+        multiple: true
       - name: --reverse_input
         type: file
         required: false
+        multiple: true
   - name: Output arguments
     arguments:
       - name: --output_forward

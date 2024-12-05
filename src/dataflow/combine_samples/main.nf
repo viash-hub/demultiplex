@@ -11,8 +11,8 @@ workflow run_wf {
       | groupTuple(by: 0, sort: "hash")
       | map {run_id, states ->
         // Gather the following state for all samples
-        def forward_fastqs = states.collect{it.forward_input}
-        def reverse_fastqs = states.collect{it.reverse_input}.findAll{it != null}
+        def forward_fastqs = states.collect{it.forward_input}.flatten()
+        def reverse_fastqs = states.collect{it.reverse_input}.findAll{it != null}.flatten()
         
         def resultState = [
           "output_forward": forward_fastqs,
