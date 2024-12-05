@@ -14,9 +14,11 @@ workflow run_wf {
         def original_id = id
 
         // Parse sample sheet for sample IDs
+        println "Processing run information file ${sample_sheet}"
         csv_lines = sample_sheet.splitCsv(header: false, sep: ',')
         csv_lines.any { csv_items ->
           if (csv_items.isEmpty()) {
+            // skip empty line
             return
           }
           def possible_header = csv_items[0]
@@ -24,22 +26,40 @@ workflow run_wf {
           if (header) {
             if (start_parsing) {
               // Stop parsing when encountering the next header
+              println "Encountered next header '[${start_parsing}]', stopping parsing."
               return true
             }
-            if (header == "Data") {
+            // [Data] for illumina
+            // [Samples] for Element Biosciences
+            if (header in ["Data", "Samples"]) {
+              println "Found header [${header}], start parsing."
               start_parsing = true
+              return
             }
           }
           if (start_parsing) {
-            if ( !sample_id_column_index ) {
-              sample_id_column_index = csv_items.findIndexValues{it == "Sample_ID"}
-              assert sample_id_column_index != -1:
-              "Could not find column 'Sample_ID' in sample sheet!"
+            if ( sample_id_column_index == null) {
+              println "Looking for sample name column."
+              sample_id_column_index = csv_items.findIndexValues{it == "Sample_ID" || it == "SampleName"}
+              assert (!sample_id_column_index.isEmpty()):
+                "Could not find column 'Sample_ID' (Illumina) or 'SampleName' " + 
+                "(Element Biosciences) in run information! Found: ${sample_id_column_index}"
+              assert sample_id_column_index.size() == 1, "Expected run information file to contain " + 
+                "a column 'Sample_ID' or 'SampleName', not both. Found: ${sample_id_column_index}"
+              sample_id_column_index = sample_id_column_index[0] 
+              println "Found sample names column '${csv_items[sample_id_column_index]}'."
               return
             }
             samples += csv_items[sample_id_column_index]
           }
+          // This return is important! (If 'true' is returned, the parsing stops.)
+          return 
         }
+        assert start_parsing: 
+          "Sample information file does not contain [Data] or [Samples] header!"
+        assert samples.size() > 1:
+          "Sample information file does not seem to contain any information about the samples!"
+        println "Finished processing run information file, found samples: ${samples}."
         println "Looking for fastq files in ${state.input}."
         def allfastqs = state.input.listFiles().findAll{it.isFile() && it.name ==~ /^.+\.fastq.gz$/}
         println "Found ${allfastqs.size()} fastq files, matching them to the following samples: ${samples}."
@@ -48,17 +68,15 @@ workflow run_wf {
           def reverse_regex = ~/^${sample_id}_S(\d+)_(L(\d+)_)?R2_(\d+)\.fastq\.gz$/
           def forward_fastq = state.input.listFiles().findAll{it.isFile() && it.name ==~ forward_regex}
           def reverse_fastq = state.input.listFiles().findAll{it.isFile() && it.name ==~ reverse_regex}
-          assert forward_fastq : "No forward fastq files were found for sample ${sample_id}"
-          assert forward_fastq.size() < 2:
-          "Found multiple forward fastq files corresponding to sample ${sample_id}: ${forward_fastq}"
-          assert reverse_fastq.size() < 2:
-          "Found multiple reverse fastq files corresponding to sample ${sample_id}: ${reverse_fastq}."
-          assert !forward_fastq.isEmpty():
-          "Expected a forward fastq file to have been created correspondig to sample ${sample_id}."
-          // TODO: if one sample had reverse reads, the others must as well.
-          reverse_fastq = !reverse_fastq.isEmpty() ? reverse_fastq[0] : null
+          assert forward_fastq && !forward_fastq.isEmpty(): "No forward fastq files were found for sample ${sample_id}. " +
+            "All fastq files in directory: ${allfastqs.collect{it.name}}"
+          assert (reverse_fastq.isEmpty() || (forward_fastq.size() == reverse_fastq.size())): 
+            "Expected equal number of forward and reverse fastq files for sample ${sample_id}. " +
+            "Found forward: ${forward_fastq} and reverse: ${reverse_fastq}."
+          println "Found ${forward_fastq.size()} forward and ${reverse_fastq.size()} reverse " +
+            "fastq files for sample ${sample_id}"
           def fastqs_state = [
-            "fastq_forward": forward_fastq[0],
+            "fastq_forward": forward_fastq,
             "fastq_reverse": reverse_fastq,
             "_meta": [ "join_id": original_id ],
           ]
