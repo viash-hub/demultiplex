@@ -1,17 +1,25 @@
 # demultiplex x.y.z
 
 ## Major updates
-The outflow of the workflow has been refactored to be more flexible. The logic is as follows:
+The outflow of the workflow has been refactored to be more flexible. This is done by creating a wrapper workflow `runner` that wraps the native `demultiplex` workflow. The `runner` workflow is responsible for setting the output directory based on the input arguments:
 
-- If no `id` is provided, the output directory is set to `$publish_dir/demultiplex_<version>`.
+3 arguments exist for specifying the relative location of the 3 _outputs_ of the workflow:
+
+- `fastq_output`: The directory where the demultiplexed fastq files are stored.
+- `falco_output`: the directory for the `fastqc`/`falco` reports.
+- `multiqc_output`: The filename for the `multiqc` report.
+
+The target location path is determined by the following logic:
+
+- If no `id` is provided, the output directory is set to `$publish_dir`.
 - If an `id` is explicitly set using Seqera Cloud or by adding `--id <>`, the output directory is set to `$publish_dir/<id>`.
 
 The workflow has two optional flags to be used in combination with `--id`:
 
 - `--add_date_time`: rather than publishing the results under `$publish_dir`, this adds an additional layer `$publish_dir/<date-time-stamp>/`. This is useful when you want to keep track of multiple runs of the workflow (example: `240322_143020`).
-- `--add_workflow_identifier`: adding this flag will add `_demultiplex_<version>` to the output directory (example: `demultiplex_v0.2.0`). When starting the workflow from a non-release, the version will be set to `version_unkonwn`.
+- `--add_workflow_id`: adding this flag will add `_demultiplex_<version>` to the output directory (example: `demultiplex_v0.2.0`). When starting the workflow from a non-release, the version will be set to `version_unkonwn`.
 
-The structure in the output directory is:
+The default structure in the output directory is:
 
 - Two sub-directories:
   - `fastq`
