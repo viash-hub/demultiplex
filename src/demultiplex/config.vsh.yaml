@@ -30,16 +30,6 @@ argument_groups:
           required.
   - name: Output arguments
     arguments:
-      - name: --add_date_time
-        description: |
-          Add date and time to the output directory name. This is useful
-          when running the same pipeline multiple times on the same input
-          directory.
-        type: boolean_true
-      - name: --add_workflow_identifier
-        description: |
-          Add a workflow identifier to the output directory name.
-        type: boolean_true
       - name: --output
         description: Directory to write fastq data to
         type: file

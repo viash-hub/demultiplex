@@ -1,16 +1,9 @@
-def date = new Date().format('yyyyMMdd_hhmmss')
-
-def viash_config = java.nio.file.Paths.get("$projectDir/../../../").toAbsolutePath().normalize().toString() + "/_viash.yaml"
-def version = get_version(file(viash_config).text)
-
 workflow run_wf {
   take:
     input_ch
 
   main:
     samples_ch = input_ch
-
-      | niceView()
 
       // untar input if needed
       | untar.run(
@@ -171,6 +164,8 @@ workflow run_wf {
       )
 
     output_ch = samples_ch 
+
+
       | combine_samples.run(
         fromState: { id, state ->
           [
@@ -220,18 +215,9 @@ workflow run_wf {
           state + [ "output_multiqc" : result.output_report ]
         }
       )
-      // Add datetime and workflow identifier to the output location if requested
-      // Don't add an extra level to the output if the `id` is unchanged
-      | map{ id, state ->
-        def newIdTmp1 = (state.add_date_time) ? id + "_${date}".toString() : id
-        def newIdTmp2 = (state.add_workflow_identifier) ? newIdTmp1 + "_demultiplex_" + version : newIdTmp1
-        // if no id is provided and not extra annotations are required, use the workflow and version
-        def newId = (newIdTmp2 == "run") ? "demultiplex_" + version : newIdTmp2
-        [ newId, state + [ _meta: [ join_id: id ] ] ]
-      }
       | setState(
         [
-          "_meta": "_meta",
+          //"_meta": "_meta",
           "output": "output_demultiplexer",
           "output_falco": "output_falco",
           "output_multiqc": "output_multiqc"
@@ -240,16 +226,4 @@ workflow run_wf {
 
   emit:
     output_ch
-      | view{"Publishing result to ${params.publish_dir}/${it[0]}"}
-}
-
-def get_version(txt) {
-  matcher = txt =~ /(?m)^version:\s+(.*)$/
-  if (matcher.size() == 0) {
-    println("No version found, setting version to 'unknown_version'")
-    return "unknown_version"
-  } else {
-    println("Version found: ${matcher[0][1]}")
-    return matcher[0][1]
-  }
 }
