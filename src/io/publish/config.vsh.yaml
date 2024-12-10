@@ -43,5 +43,5 @@ engines:
         run: apt update && apt install -y procps
 
 runners:
-  - type: native
+  - type: executable
   - type: nextflow

@@ -1,6 +1,6 @@
 def date = new Date().format('yyyyMMdd_hhmmss')
 
-def viash_config = java.nio.file.Paths.get("$projectDir/../../../").toAbsolutePath().normalize().toString() + "/_viash.yaml"
+def viash_config = java.nio.file.Paths.get("$projectDir/../../").toAbsolutePath().normalize().toString() + "/_viash.yaml"
 def version = get_version(file(viash_config).text)
 
 workflow run_wf {
