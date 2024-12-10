@@ -3,6 +3,9 @@ description: Demultiplexing of raw sequencing data
 argument_groups:
   - name: Input arguments
     arguments:
+      - name: --id
+        description: Unique identifier for the run
+        type: string
       - name: --input
         description: Directory containing raw sequencing data
         type: file
@@ -31,19 +34,20 @@ argument_groups:
         description: Directory to write fastq data to
         type: file
         direction: output
-        required: true
+        required: false
+        default: "$id/fastq"
       - name: "--output_falco"
         description: Directory to write falco output to
         type: file
         direction: output
         required: false
-        default: "$id/falco"
+        default: "$id/qc/fastqc"
       - name: "--output_multiqc"
         description: Directory to write falco output to
         type: file
         direction: output
         required: false
-        default: "$id/multiqc_report.html"
+        default: "$id/qc/multiqc_report.html"
 resources:
   - type: nextflow_script
     path: main.nf

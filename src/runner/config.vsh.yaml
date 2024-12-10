@@ -1,0 +1,52 @@
+name: runner
+description: Runner for demultiplexing of raw sequencing data
+argument_groups:
+  - name: Input arguments
+    arguments:
+      - name: --input
+        description: Base directory of the form `s3:/<bucket>/Sequencing/<Sequencer>/<RunID>/`
+        type: file
+        required: true
+  - name: Annotation flags
+    arguments:
+      - name: --add_date_time
+        description: |
+          Add date and time to the output directory name. This is useful
+          when running the same pipeline multiple times on the same input
+          directory.
+        type: boolean_true
+      - name: --add_workflow_id
+        description: |
+          Add a workflow identifier to the output directory name.
+        type: boolean_true
+  - name: Output arguments
+    arguments:
+      - name: --fastq_output
+        type: file
+        direction: output
+        default: "fastq"
+      - name: --falco_output
+        type: file
+        direction: output
+        default: "qc/fastqc"
+      - name: --multiqc_output
+        type: file
+        direction: output
+        default: "qc/multiqc_report.html"
+
+resources:
+  - type: nextflow_script
+    path: main.nf
+    entrypoint: run_wf
+
+dependencies:
+  - name: demultiplex
+    repository: local
+  - name: io/publish
+    repository: local
+
+runners:
+  - type: nextflow
+
+engines:
+  - type: native
