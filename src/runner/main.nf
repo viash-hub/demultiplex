@@ -1,7 +1,7 @@
 def date = new Date().format('yyyyMMdd_hhmmss')
 
 def viash_config = java.nio.file.Paths.get("$projectDir/../../../").toAbsolutePath().normalize().toString() + "/_viash.yaml"
-def version = get_version(file(viash_config).text)
+def version = get_version(viash_config)
 
 workflow run_wf {
   take:
@@ -58,13 +58,10 @@ workflow run_wf {
     output_ch
 }
 
-def get_version(txt) {
-  matcher = txt =~ /(?m)^version:\s+(.*)$/
-  if (matcher.size() == 0) {
-    println("No version found, setting version to 'unknown_version'")
-    return "unknown_version"
-  } else {
-    println("Version found: ${matcher[0][1]}")
-    return matcher[0][1]
-  }
+def get_version(inputFile) {
+  def yamlSlurper = new groovy.yaml.YamlSlurper()
+  def loaded_viash_config = yamlSlurper.parse(file(inputFile))
+  def version = (loaded_viash_config.version) ? loaded_viash_config.version : "unknown_version"
+  println("Version to be used: ${version}")
+  return version
 }
