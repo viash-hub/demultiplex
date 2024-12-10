@@ -1,6 +1,6 @@
 def date = new Date().format('yyyyMMdd_hhmmss')
 
-def viash_config = java.nio.file.Paths.get("$projectDir/../../").toAbsolutePath().normalize().toString() + "/_viash.yaml"
+def viash_config = java.nio.file.Paths.get("$projectDir/../../../").toAbsolutePath().normalize().toString() + "/_viash.yaml"
 def version = get_version(file(viash_config).text)
 
 workflow run_wf {
@@ -24,10 +24,17 @@ workflow run_wf {
         fromState: { id, state ->
           def id1 = (params.add_date_time) ? "${id}_${date}" : id
           def id2 = (params.add_workflow_id) ? "${id1}_demultiplex_${version}" : id1
+
           def fastq_output_1 = (id == "run") ? state.fastq_output : "${id2}/" + state.fastq_output
           def falco_output_1 = (id == "run") ? state.falco_output : "${id2}/" + state.falco_output
           def multiqc_output_1 = (id == "run") ? state.multiqc_output : "${id2}/" + state.multiqc_output
-          println("Publising to ${params.publish_dir}/${id2}")
+
+          if (id == "run") {
+            println("Publising to ${params.publish_dir}")
+          } else {
+            println("Publising to ${params.publish_dir}/${id2}")
+          }
+
           [
             input: state.output,
             input_falco: state.output_falco,
