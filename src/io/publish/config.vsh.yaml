@@ -1,0 +1,48 @@
+name: "publish"
+namespace: "io"
+description: "Publish the processed results of the run"
+argument_groups:
+  - name: Input arguments
+    arguments:
+      - name: --input
+        description: Directory to write fastq data to
+        type: file
+        required: true
+      - name: "--input_falco"
+        description: Directory to write falco output to
+        type: file
+        required: true
+      - name: "--input_multiqc"
+        description: Directory to write falco output to
+        type: file
+        required: true
+  - name: Output arguments
+    arguments:
+      - name: --output
+        type: file
+        direction: output
+        default: "fastq"
+      - name: --output_falco
+        type: file
+        direction: output
+        default: "qc/fastqc"
+      - name: --output_multiqc
+        type: file
+        direction: output
+        default: "qc/multiqc_report.html"
+
+resources:
+  - type: bash_script
+    path: ./code.sh
+
+engines:
+  - type: docker
+    image: debian:stable-slim
+    setup:
+      - type: apt
+        packages:
+          - procps
+
+runners:
+  - type: executable
+  - type: nextflow

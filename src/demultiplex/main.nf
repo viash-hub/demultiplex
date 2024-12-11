@@ -4,6 +4,7 @@ workflow run_wf {
 
   main:
     samples_ch = input_ch
+
       // untar input if needed
       | untar.run(
         directives: [label: ["lowmem", "lowcpu"]],
@@ -109,11 +110,15 @@ workflow run_wf {
       | bcl_convert.run(
         runIf: {id, state -> state.demultiplexer in ["bclconvert"]},
         directives: [label: ["highmem", "midcpu"]],
-        fromState: [
-          "bcl_input_directory": "input",
-          "sample_sheet": "run_information",
-          "output_directory": "output",
-        ],
+        fromState: { id, state ->
+          [
+            bcl_input_directory: state.input,
+            sample_sheet: state.run_information,
+            output_directory: state.output,
+            reports: "reports",
+            logs: "logs"
+          ]
+        },
         toState: {id, result, state -> 
           def toAdd = [
             "output_demultiplexer" : result.output_directory,
@@ -159,6 +164,8 @@ workflow run_wf {
       )
 
     output_ch = samples_ch 
+
+
       | combine_samples.run(
         fromState: { id, state ->
           [
@@ -186,10 +193,10 @@ workflow run_wf {
         },
         toState: { id, result, state ->
           state + [ "output_falco" : result.outdir ]
-        },
+        }
       )
       | multiqc.run(
-        directives: [label: ["lowcpu", "lowmem"]],
+        directives: [label: ["midcpu", "midmem"]],
         fromState: {id, state ->
           def new_state = [
             "input": [state.output_falco],
@@ -206,10 +213,11 @@ workflow run_wf {
         },
         toState: { id, result, state ->
           state + [ "output_multiqc" : result.output_report ]
-        },
+        }
       )
       | setState(
         [
+          //"_meta": "_meta",
           "output": "output_demultiplexer",
           "output_falco": "output_falco",
           "output_multiqc": "output_multiqc"
