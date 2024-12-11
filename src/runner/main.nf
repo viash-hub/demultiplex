@@ -12,9 +12,11 @@ workflow run_wf {
       | demultiplex.run(
         fromState: [
           "input": "input",
+          "run_information": "run_information",
+          "demultiplexer": "demultiplexer",
           "output": "fastq",
           "output_falco": "qc/fastqc",
-          "output_multiqc": "qc/multiqc_report.html",
+          "output_multiqc": "qc/multiqc_report.html"
         ],
         toState: { id, result, state ->
           state + result

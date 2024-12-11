@@ -25,6 +25,11 @@ workflow run_wf {
       | map {id, state ->
         def newState = [:]
         println("Provided run information: ${state.run_information} and demultiplexer: ${state.demultiplexer}")
+        // No auto-detection of run information file (it is user provided),
+        // in this case the demultiplexer should also be specified.
+        assert (!state.run_information || state.demultiplexer): "When setting --run_information, " +
+          "you must also provide a demultiplexer"
+
         if (!state.run_information) {
           println("Run information was not specified, auto-detecting...")
           // The supported_platforms hashmap must be a 1-on-1 mapping
@@ -62,7 +67,7 @@ workflow run_wf {
             "found in input directory."
 
           // When autodetecting, the demultiplexer must be set if the run information was found
-          assert demultiplexer, "State error: the demultiplexer should have been autodetected. " +
+          assert demultiplexer: "State error: the demultiplexer should have been autodetected. " +
             "Please report this as a bug."
 
           // When autodetecting, the found demultiplexer must match
@@ -82,7 +87,7 @@ workflow run_wf {
             "run_information": run_information,
             "demultiplexer": demultiplexer,
           ]
-        }
+        } // end auto-detection logic
 
         if (newState.demultiplexer in ["bclconvert"]) {
           // Do not add InterOp to state because we generate the summary csv's in the next
