@@ -4,6 +4,8 @@
 
 * Fix detection of sample IDs from Illumina V2 sample sheets (PR #28).
 
+* Provide a clear error message when `--run_information` is provided but not `--demultiplexer` (PR #27).
+
 # demultiplex v0.3.0
 
 ## Major updates
