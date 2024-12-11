@@ -1,3 +1,9 @@
+# demultiplex v0.3.1
+
+# Bug fixes
+
+* Fix detection of sample IDs from Illumina V2 sample sheets (PR #28).
+
 # demultiplex v0.3.0
 
 ## Major updates
