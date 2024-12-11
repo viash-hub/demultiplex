@@ -2,7 +2,7 @@
 
 # Bug fixes
 
-* Ignore empty CSV entries when parsing sample information (PR )
+* Ignore empty CSV entries when parsing sample information (PR #29).
 
 # demultiplex v0.3.1
 
