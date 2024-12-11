@@ -1,3 +1,9 @@
+# demultiplex v0.3.2
+
+# Bug fixes
+
+* Ignore empty CSV entries when parsing sample information (PR )
+
 # demultiplex v0.3.1
 
 # Minor updates
