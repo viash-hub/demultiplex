@@ -50,7 +50,10 @@ workflow run_wf {
               println "Found sample names column '${csv_items[sample_id_column_index]}'."
               return
             }
-            samples += csv_items[sample_id_column_index]
+            def candidate_sample_id = csv_items[sample_id_column_index]
+            if (candidate_sample_id?.trim()) { // Don't add empty csv entries.
+              samples += csv_items[sample_id_column_index]
+            }
           }
           // This return is important! (If 'true' is returned, the parsing stops.)
           return 
