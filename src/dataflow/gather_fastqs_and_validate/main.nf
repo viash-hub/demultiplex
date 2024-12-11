@@ -29,9 +29,9 @@ workflow run_wf {
               println "Encountered next header '[${start_parsing}]', stopping parsing."
               return true
             }
-            // [Data] for illumina
+            // [Data], [BCLConvert_Data] for illumina
             // [Samples] for Element Biosciences
-            if (header in ["Data", "Samples"]) {
+            if (header in ["Data", "Samples", "BCLConvert_Data"]) {
               println "Found header [${header}], start parsing."
               start_parsing = true
               return
@@ -56,7 +56,7 @@ workflow run_wf {
           return 
         }
         assert start_parsing: 
-          "Sample information file does not contain [Data] or [Samples] header!"
+          "Sample information file does not contain [Data], [Samples] or [BCLConvert_Data] header!"
         assert samples.size() > 1:
           "Sample information file does not seem to contain any information about the samples!"
         println "Finished processing run information file, found samples: ${samples}."
