@@ -37,10 +37,11 @@ resources:
 
 engines:
   - type: docker
-    image: debian:stable-20220912
+    image: debian:stable-slim
     setup:
-      - type: docker
-        run: apt update && apt install -y procps
+      - type: apt
+        packages:
+          - procps
 
 runners:
   - type: executable
