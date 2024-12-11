@@ -1,5 +1,9 @@
 # demultiplex v0.3.1
 
+# Minor updates
+
+* Add `--run_information` and `--demultiplexer` arguments to `runner` workflow (PR #27).
+
 # Bug fixes
 
 * Fix detection of sample IDs from Illumina V2 sample sheets (PR #28).
