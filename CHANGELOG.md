@@ -5,7 +5,8 @@
 * `demultiplex` workflow: renamed `sample_sheet` argument to `run_information` (PR #24)
 
 ## Major updates
-The outflow of the workflow has been refactored to be more flexible. This is done by creating a wrapper workflow `runner` that wraps the native `demultiplex` workflow. The `runner` workflow is responsible for setting the output directory based on the input arguments:
+
+The outflow of the workflow has been refactored to be more flexible (PR #19). This is done by creating a wrapper workflow `runner` that wraps the native `demultiplex` workflow. The `runner` workflow is responsible for setting the output directory based on the input arguments:
 
 3 arguments exist for specifying the relative location of the 3 _outputs_ of the workflow:
 
