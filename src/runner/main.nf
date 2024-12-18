@@ -9,6 +9,15 @@ workflow run_wf {
 
   main:
     output_ch = input_ch
+      // Extract the ID from the input.
+      // If the input is a tarball, strip the suffix.
+      | map{ id, state ->
+        def id_with_suffix = state.input.getFileName().toString()
+        [
+          id,
+          state + [ run_id: id_with_suffix - ~/\.(tar.gz|tgz|tar)$/ ]
+        ]
+      }
       | demultiplex.run(
         fromState: [
           "input": "input",
@@ -24,14 +33,15 @@ workflow run_wf {
       )
       | publish.run(
         fromState: { id, state ->
-          def id1 = (params.add_date_time) ? "${id}_${date}" : id
-          def id2 = (params.add_workflow_id) ? "${id1}_demultiplex_${version}" : id1
+          println(state.plain_output)
+          def id1 = (state.plain_output) ? id : "${state.run_id}/${date}"
+          def id2 = (state.plain_output) ? id : "${id1}_demultiplex_${version}"
 
-          def fastq_output_1 = (id == "run") ? state.fastq_output : "${id2}/" + state.fastq_output
-          def falco_output_1 = (id == "run") ? state.falco_output : "${id2}/" + state.falco_output
-          def multiqc_output_1 = (id == "run") ? state.multiqc_output : "${id2}/" + state.multiqc_output
+          def fastq_output_1 = (id2 == "run") ? state.fastq_output : "${id2}/" + state.fastq_output
+          def falco_output_1 = (id2 == "run") ? state.falco_output : "${id2}/" + state.falco_output
+          def multiqc_output_1 = (id2 == "run") ? state.multiqc_output : "${id2}/" + state.multiqc_output
 
-          if (id == "run") {
+          if (id2 == "run") {
             println("Publising to ${params.publish_dir}")
           } else {
             println("Publising to ${params.publish_dir}/${id2}")
