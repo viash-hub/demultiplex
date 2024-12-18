@@ -15,7 +15,7 @@ workflow run_wf {
         def id_with_suffix = state.input.getFileName().toString()
         [
           id,
-          state + [ run_id: id_with_suffix.replaceAll(".tgz", "").replaceAll(".tar.gz", "").replaceAll(".tar", "") ]
+          state + [ run_id: id_with_suffix - ~/\.(tar.gz|tgz|tar)$/ ]
         ]
       }
       | demultiplex.run(
