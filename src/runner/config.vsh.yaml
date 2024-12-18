@@ -6,7 +6,8 @@ argument_groups:
       - name: --input
         description: |
           Base directory of the canonical form `s3://<bucket>/<path>/<RunID>/`.
-          Please note that the workflow supports xxx
+          A tarball (tar.gz, .tgz, .tar) containing run information can be provided in which
+          case the RunID is set to the name of the tarball without the extension.
         type: file
         required: true
       - name: --run_information

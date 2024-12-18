@@ -10,13 +10,12 @@ workflow run_wf {
   main:
     output_ch = input_ch
       // Extract the ID from the input.
-      // If this is a directory or tar-gz file containing `.`'s,
-      // only select the part before the first `.`.
+      // If the input is a tarball, strip the suffix.
       | map{ id, state ->
-        def id_with_dots = state.input.getFileName().toString()
+        def id_with_suffix = state.input.getFileName().toString()
         [
           id,
-          state + [ run_id: id_with_dots - ~/(\.\w+)*$/ ]
+          state + [ run_id: id_with_suffix.replaceAll(".tgz", "").replaceAll(".tar.gz", "").replaceAll(".tar", "") ]
         ]
       }
       | demultiplex.run(
