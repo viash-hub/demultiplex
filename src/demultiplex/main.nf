@@ -225,7 +225,8 @@ workflow run_wf {
           //"_meta": "_meta",
           "output": "output_demultiplexer",
           "output_falco": "output_falco",
-          "output_multiqc": "output_multiqc"
+          "output_multiqc": "output_multiqc",
+          "output_run_information": "run_information",
         ]
       )
 

@@ -48,6 +48,11 @@ argument_groups:
         direction: output
         required: false
         default: "$id/qc/multiqc_report.html"
+      - name: "--output_run_information"
+        type: file
+        direction: "output"
+        required: true
+        default: "$id/run_information.csv"
 resources:
   - type: nextflow_script
     path: main.nf

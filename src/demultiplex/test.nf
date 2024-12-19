@@ -35,6 +35,26 @@ workflow test_illumina {
       fastq_files.each{
         assert it.length() != 0: "Expected FASTQ file to not be empty"
       }
+      assert state.output_run_information.isFile(): "Expected output run information to be a file"
+      expected_run_information = """[Header]
+                                   |Date,6/24/2020
+                                   |Application,Illumina DRAGEN COVIDSeq Test Pipeline
+                                   |Instrument Type,NovaSeq6000
+                                   |Assay,Illumina COVIDSeq Test
+                                   |Index Adapters,IDT-ILMN DNA-RNA UDP Indexes
+                                   |Chemistry,Amplicon
+
+                                   |[Settings]
+                                   |AdapterRead1,CTGTCTCTTATACACATCT
+
+                                   |[Data]
+                                   |Lane,Sample_ID,Sample_Type,Index_ID,Index,Index2
+                                   |1,Sample1,PatientSample,UDP0001,GAACTGAGCG,TCGTGGAGCG
+                                   |1,SampleA,PatientSample,UDP0002,AGGTCAGATA,CTACAAGATA
+                                   |1,Sample23,PatientSample,UDP0003,CGTCTCATAT,TATAGTAGCT
+                                   |1,sampletest,PatientSample,UDP0004,ATTCCATAAG,TGCCTGGTGG
+                                   |""".stripMargin()
+      assert state.output_run_information.text.replaceAll("\r\n", "\n") == expected_run_information
     }
 }
 

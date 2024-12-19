@@ -25,7 +25,8 @@ workflow run_wf {
           "demultiplexer": "demultiplexer",
           "output": "fastq",
           "output_falco": "qc/fastqc",
-          "output_multiqc": "qc/multiqc_report.html"
+          "output_multiqc": "qc/multiqc_report.html",
+          "output_run_information": "run_information.csv",
         ],
         toState: { id, result, state ->
           state + result
@@ -40,6 +41,7 @@ workflow run_wf {
           def fastq_output_1 = (id2 == "run") ? state.fastq_output : "${id2}/" + state.fastq_output
           def falco_output_1 = (id2 == "run") ? state.falco_output : "${id2}/" + state.falco_output
           def multiqc_output_1 = (id2 == "run") ? state.multiqc_output : "${id2}/" + state.multiqc_output
+          def run_information_output_1 = (id2 == "run") ? state.run_information_output : "${id2}/" + state.run_information_output
 
           if (id2 == "run") {
             println("Publising to ${params.publish_dir}")
@@ -51,9 +53,11 @@ workflow run_wf {
             input: state.output,
             input_falco: state.output_falco,
             input_multiqc: state.output_multiqc,
+            input_run_information: state.output_run_information,
             output: fastq_output_1,
             output_falco: falco_output_1,
-            output_multiqc: multiqc_output_1
+            output_multiqc: multiqc_output_1,
+            output_run_information: run_information_output_1,
           ]
         },
         toState: { id, result, state -> [:] },
