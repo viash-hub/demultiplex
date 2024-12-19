@@ -19,14 +19,20 @@ workflow run_wf {
         ]
       }
       | demultiplex.run(
-        fromState: [
-          "input": "input",
-          "run_information": "run_information",
-          "demultiplexer": "demultiplexer",
-          "output": "fastq",
-          "output_falco": "qc/fastqc",
-          "output_multiqc": "qc/multiqc_report.html"
-        ],
+        fromState: { id, state ->
+          def state_to_pass = [
+            "input": state.input,
+            "run_information": state.run_information,
+            "demultiplexer": state.demultiplexer,
+            "output": "fastq",
+            "output_falco": "qc/fastqc",
+            "output_multiqc": "qc/multiqc_report.html",
+          ]
+          if (state.run_information) {
+            state_to_pass += ["output_run_information": state.run_information.getName()] 
+          }
+          state_to_pass
+        },
         toState: { id, result, state ->
           state + result
         },
@@ -40,6 +46,7 @@ workflow run_wf {
           def fastq_output_1 = (id2 == "run") ? state.fastq_output : "${id2}/" + state.fastq_output
           def falco_output_1 = (id2 == "run") ? state.falco_output : "${id2}/" + state.falco_output
           def multiqc_output_1 = (id2 == "run") ? state.multiqc_output : "${id2}/" + state.multiqc_output
+          def run_information_output_1 = (id2 == "run") ? "${state.output_run_information.getName()}" : "${id2}/${state.output_run_information.getName()}"
 
           if (id2 == "run") {
             println("Publising to ${params.publish_dir}")
@@ -51,9 +58,11 @@ workflow run_wf {
             input: state.output,
             input_falco: state.output_falco,
             input_multiqc: state.output_multiqc,
+            input_run_information: state.output_run_information,
             output: fastq_output_1,
             output_falco: falco_output_1,
-            output_multiqc: multiqc_output_1
+            output_multiqc: multiqc_output_1,
+            output_run_information: run_information_output_1,
           ]
         },
         toState: { id, result, state -> [:] },

@@ -1,30 +1,26 @@
 #!/bin/bash
 
-echo "Publishing $par_input -> $par_output"
-echo "Publishing $par_input_falco -> $par_output_falco"
-echo "Publishing $par_input_multiqc -> $par_output_multiqc"
+set -eo pipefail
 
-echo
-echo "Creating directory if it does not exist:"
-mkdir -p $(dirname "$par_output") && echo "Containing directory $par_output created"
-mkdir -p $(dirname "$par_output_falco") && echo "Containing directory $par_output_falco created"
-mkdir -p $(dirname "$par_output_multiqc") && echo "Containing directory $par_output_multiqc created"
+declare -A input_output_mapping=(["par_input"]="par_output" 
+                                 ["par_input_falco"]="par_output_falco" 
+                                 ["par_input_multiqc"]="par_output_multiqc"
+                                 ["par_input_run_information"]="par_output_run_information"
+                                )
 
-echo
-echo "Copying files..."
-cp -rL "$par_input" "$par_output"
-cp -rL "$par_input_falco" "$par_output_falco"
-cp -rL "$par_input_multiqc" "$par_output_multiqc"
+for input_argument_name in "${!input_output_mapping[@]}"
+do
+    input_location="${!input_argument_name}"
+    output_argument_name="${input_output_mapping[$input_argument_name]}"
+    output_location="${!output_argument_name}"
+    echo "Publishing $input_location -> $output_location"
 
-echo
-echo "Output files:"
-echo "par_output:"
-ls "$par_output"
+    echo "Creating directory if it does not exist."
+    mkdir -p $(dirname "$output_location") && echo "Containing directory $output_location created"
 
-echo
-echo "par_output_falco:"
-ls "$par_output_falco"
+    echo "Copying files..."
+    cp -rL "$input_location" "$output_location"
 
-echo
-echo "par_output_multiqc:"
-ls "$par_output_multiqc"
+    echo "Output files for $output_location:"
+    ls "$output_location"
+done

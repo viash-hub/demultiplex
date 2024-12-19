@@ -19,6 +19,7 @@
     $publish_dir
     └── 200624_A00834_0183_BHMTFYDRXX
         └── 20241217_051404_demultiplex_v1.2
+            ├── run_information.csv
             ├── fastq
             │   ├── Sample1_S1_L001_R1_001.fastq.gz
             │   ├── Sample23_S3_L001_R1_001.fastq.gz
@@ -48,6 +49,9 @@
 
 - This logic can be avoided by providing the flag `--plain_output`.
 
+# Minor updates
+
+* Added `output_run_information` argument that copies the run information file to the output (PR #31).
 
 # demultiplex v0.3.2
 
