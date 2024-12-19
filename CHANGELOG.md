@@ -1,3 +1,9 @@
+# demultiplex v0.3.4
+
+# Minor updates
+
+* Added `output_run_information` argument that copies the run information file to the output (PR #31).
+
 # demultiplex v0.3.3
 
 ## Breaking change
