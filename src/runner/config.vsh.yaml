@@ -4,7 +4,10 @@ argument_groups:
   - name: Input arguments
     arguments:
       - name: --input
-        description: Base directory of the form `s3:/<bucket>/Sequencing/<Sequencer>/<RunID>/`
+        description: |
+          Base directory of the canonical form `s3://<bucket>/<path>/<RunID>/`.
+          A tarball (tar.gz, .tgz, .tar) containing run information can be provided in which
+          case the RunID is set to the name of the tarball without the extension.
         type: file
         required: true
       - name: --run_information
@@ -27,15 +30,10 @@ argument_groups:
           required.
   - name: Annotation flags
     arguments:
-      - name: --add_date_time
+      - name: --plain_output
         description: |
-          Add date and time to the output directory name. This is useful
-          when running the same pipeline multiple times on the same input
-          directory.
-        type: boolean_true
-      - name: --add_workflow_id
-        description: |
-          Add a workflow identifier to the output directory name.
+          Flag to indicate that the output should be stored directly under $publish_dir rather than
+          under a subdirectory structure runID/<date_time>_demultiplex_<version>/.
         type: boolean_true
   - name: Output arguments
     arguments:

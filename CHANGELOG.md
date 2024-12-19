@@ -1,3 +1,58 @@
+# demultiplex v0.3.3
+
+## Breaking change
+
+- The `runner` defines the output differently now:
+
+  - The last part of the `--input` path is expected to be the run ID and this run ID is used to create the output directory.
+  - If the input is `file.tar.gz` instead of a directory, the `file` part is used as the run ID.
+
+- The output structure is then as follows:
+
+    ```
+    $publish_dir/<run_id>/<date_time_stamp>_demultiplex_<version>/
+    ```
+
+    For instance:
+
+    ```
+    $publish_dir
+    └── 200624_A00834_0183_BHMTFYDRXX
+        └── 20241217_051404_demultiplex_v1.2
+            ├── run_information.csv
+            ├── fastq
+            │   ├── Sample1_S1_L001_R1_001.fastq.gz
+            │   ├── Sample23_S3_L001_R1_001.fastq.gz
+            │   ├── SampleA_S2_L001_R1_001.fastq.gz
+            │   ├── Undetermined_S0_L001_R1_001.fastq.gz
+            │   └── sampletest_S4_L001_R1_001.fastq.gz
+            └── qc
+                ├── fastqc
+                │   ├── Sample1_S1_L001_R1_001.fastq.gz_fastqc_data.txt
+                │   ├── Sample1_S1_L001_R1_001.fastq.gz_fastqc_report.html
+                │   ├── Sample1_S1_L001_R1_001.fastq.gz_summary.txt
+                │   ├── Sample23_S3_L001_R1_001.fastq.gz_fastqc_data.txt
+                │   ├── Sample23_S3_L001_R1_001.fastq.gz_fastqc_report.html
+                │   ├── Sample23_S3_L001_R1_001.fastq.gz_summary.txt
+                │   ├── SampleA_S2_L001_R1_001.fastq.gz_fastqc_data.txt
+                │   ├── SampleA_S2_L001_R1_001.fastq.gz_fastqc_report.html
+                │   ├── SampleA_S2_L001_R1_001.fastq.gz_summary.txt
+                │   ├── Undetermined_S0_L001_R1_001.fastq.gz_fastqc_data.txt
+                │   ├── Undetermined_S0_L001_R1_001.fastq.gz_fastqc_report.html
+                │   ├── Undetermined_S0_L001_R1_001.fastq.gz_summary.txt
+                │   ├── sampletest_S4_L001_R1_001.fastq.gz_fastqc_data.txt
+                │   ├── sampletest_S4_L001_R1_001.fastq.gz_fastqc_report.html
+                │   └── sampletest_S4_L001_R1_001.fastq.gz_summary.txt
+                └── multiqc_report.html
+
+    ```
+
+- This logic can be avoided by providing the flag `--plain_output`.
+
+# Minor updates
+
+* Added `output_run_information` argument that copies the run information file to the output (PR #31).
+
 # demultiplex v0.3.2
 
 # Bug fixes
