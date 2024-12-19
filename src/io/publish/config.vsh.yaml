@@ -13,7 +13,11 @@ argument_groups:
         type: file
         required: true
       - name: "--input_multiqc"
-        description: Directory to write falco output to
+        description: Location where to write the MultiQC report to.
+        type: file
+        required: true
+      - name: "--input_run_information"
+        description: "Location where to write the run information to."
         type: file
         required: true
   - name: Output arguments
@@ -30,6 +34,10 @@ argument_groups:
         type: file
         direction: output
         default: "qc/multiqc_report.html"
+      - name: --output_run_information
+        type: file
+        direction: output
+        default: run_information.csv
 
 resources:
   - type: bash_script

@@ -49,6 +49,10 @@ argument_groups:
         type: file
         direction: output
         default: "qc/multiqc_report.html"
+      - name: "--run_information_output"
+        type: file
+        direction: output
+        default: "run_information.csv"
 
 resources:
   - type: nextflow_script
