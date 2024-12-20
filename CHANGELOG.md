@@ -1,3 +1,9 @@
+# demultiplex v0.3.4
+
+## Minor updates
+
+* Resource labels are now automatically included during build (PR #32).
+
 # demultiplex v0.3.3
 
 ## Breaking change
