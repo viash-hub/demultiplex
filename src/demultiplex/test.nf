@@ -25,7 +25,9 @@ workflow test_illumina {
       }
     | map {id, state ->
       assert state.output.isDirectory(): "Expected bclconvert output to be a directory"
-      assert state.output_falco.isDirectory(): "Expected falco output to be a directory"
+      state.output_falco.each{
+         assert it.isDirectory(): "Expected falco output to be a directory"
+      }
       assert state.output_multiqc.isFile(): "Expected multiQC output to be a file"
       fastq_files = state.output.listFiles().collect{it.name}
       assert ["Undetermined_S0_L001_R1_001.fastq.gz", "Sample23_S3_L001_R1_001.fastq.gz", 
@@ -76,7 +78,7 @@ workflow test_bases2fastq {
       }
     | map {id, state ->
       assert state.output.isDirectory(): "Expected bases2fastq output to be a directory"
-      assert state.output_falco.isDirectory(): "Expected falco output to be a directory"
+      state.output_falco.each{assert it.isDirectory(): "Expected falco output to be a directory"}
       assert state.output_multiqc.isFile(): "Expected multiQC output to be a file"
     }
 }

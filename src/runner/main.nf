@@ -24,9 +24,9 @@ workflow run_wf {
             "input": state.input,
             "run_information": state.run_information,
             "demultiplexer": state.demultiplexer,
-            "output": "fastq",
-            "output_falco": "qc/fastqc",
-            "output_multiqc": "qc/multiqc_report.html",
+            "output": "$id/fastq",
+            "output_falco": "$id/qc/fastqc",
+            "output_multiqc": "$id/qc/multiqc_report.html",
           ]
           if (state.run_information) {
             state_to_pass += ["output_run_information": state.run_information.getName()] 

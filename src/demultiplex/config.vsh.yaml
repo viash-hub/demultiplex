@@ -41,6 +41,7 @@ argument_groups:
         type: file
         direction: output
         required: false
+        multiple: true
         default: "$id/qc/fastqc"
       - name: "--output_multiqc"
         description: Directory to write falco output to
