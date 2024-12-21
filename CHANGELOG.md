@@ -1,3 +1,11 @@
+# demultiplex v0.3.5
+
+## Breaking changes
+
+* The `demultiplex's` `output_falco` argument now outputs a list of directories
+  (one for each barcode) instead of one directory for the complete run. The output
+  from the `runner` workflow remains unchanged (PR #)
+
 # demultiplex v0.3.4
 
 ## Minor updates
