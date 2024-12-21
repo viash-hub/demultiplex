@@ -169,28 +169,12 @@ workflow run_wf {
       )
 
     output_ch = samples_ch 
-
-
-      | combine_samples.run(
-        fromState: { id, state ->
-          [
-            "id": state.run_id,
-            "forward_input": state.fastq_forward,
-            "reverse_input": state.fastq_reverse, 
-          ]
-        },
-        toState: [
-          "forward_fastqs": "output_forward",
-          "reverse_fastqs": "output_reverse",
-        ]
-      )
       | falco.run(
-        directives: [label: ["lowcpu", "lowmem"]],
+        directives: [label: ["verylowcpu", "lowmem"]],
         fromState: {id, state ->
-          reverse_fastqs_list = state.reverse_fastqs ? state.reverse_fastqs : []
           [
-            "input": state.forward_fastqs + reverse_fastqs_list,
-            "outdir": "${state.output_falco}",
+            "input": [state.fastq_forward, state.fastq_reverse],
+            "outdir": "$id/qc/falco",
             "summary_filename": null,
             "report_filename": null,
             "data_filename": null,
@@ -200,11 +184,28 @@ workflow run_wf {
           state + [ "output_falco" : result.outdir ]
         }
       )
+
+      | combine_samples.run(
+        fromState: { id, state ->
+          [
+            "id": state.run_id,
+            "forward_input": state.fastq_forward,
+            "reverse_input": state.fastq_reverse, 
+            "falco_dir": state.output_falco,
+          ]
+        },
+        toState: [
+          "forward_fastqs": "output_forward",
+          "reverse_fastqs": "output_reverse",
+          "output_falco": "output_falco",
+        ]
+      )
+
       | multiqc.run(
         directives: [label: ["midcpu", "midmem"]],
         fromState: {id, state ->
           def new_state = [
-            "input": [state.output_falco],
+            "input": state.output_falco,
             "output_report": state.output_multiqc,
             "cl_config": 'sp: {fastqc/data: {fn: "*_fastqc_data.txt"}}'
           ]
