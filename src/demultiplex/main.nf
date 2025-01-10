@@ -94,6 +94,10 @@ workflow run_wf {
           // step based on the run dir, not the InterOp dir.
           def interop_dir = state.input.resolve("InterOp")
           assert interop_dir.isDirectory(): "Expected InterOp directory to be present."
+
+          def copycomplete_file = state.input.resolve("CopyComplete.txt")
+          assert (copycomplete_file.isFile() || state.skip_copycomplete_check): 
+            "'CopyComplete.txt' file was not found!"
         }
 
         def resultState = state + newState
