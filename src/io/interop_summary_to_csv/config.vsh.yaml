@@ -18,7 +18,7 @@ argument_groups:
         direction: output
         required: true
 requirements:
-  - commands: ["summary", "index-summary"]
+  commands: ["summary", "index-summary"]
 resources:
   - type: bash_script
     path: script.sh

@@ -24,6 +24,7 @@ workflow run_wf {
             "input": state.input,
             "run_information": state.run_information,
             "demultiplexer": state.demultiplexer,
+            "skip_copycomplete_check": state.skip_copycomplete_check,
             "output": "$id/fastq",
             "output_falco": "$id/qc/fastqc",
             "output_multiqc": "$id/qc/multiqc_report.html",

@@ -54,6 +54,14 @@ argument_groups:
         direction: "output"
         required: true
         default: "$id/run_information.csv"
+  - name: "Other arguments"
+    arguments:
+      - name: --skip_copycomplete_check
+        type: boolean_true
+        description: |
+          Disable the check for the presence of a "CopyComplete.txt" file in input
+          directory in case of Illumina data.
+        
 resources:
   - type: nextflow_script
     path: main.nf

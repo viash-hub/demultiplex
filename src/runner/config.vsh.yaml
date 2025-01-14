@@ -49,7 +49,13 @@ argument_groups:
         type: file
         direction: output
         default: "qc/multiqc_report.html"
-
+  - name: "Other arguments"
+    arguments:
+      - name: --skip_copycomplete_check
+        type: boolean_true
+        description: |
+          Disable the check for the presence of a "CopyComplete.txt" file in input
+          directory in case of Illumina data.
 resources:
   - type: nextflow_script
     path: main.nf

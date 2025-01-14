@@ -7,6 +7,11 @@
   for the complete run. The output from the `runner` workflow remained
   unchanged (PR #33).
 
+## Minor updates
+
+* In case Illumina data is detected in the input folder, check for the presence of the 'copyComplete.txt' file.
+  This check can be disabled using `--skip_copycomplete_check` (PR #34).
+
 # demultiplex v0.3.4
 
 ## Minor updates
