@@ -1,6 +1,6 @@
 # Demultiplex.vsh
 
-Demultiplex.vsh is a workflow for demultiplexing of raw sequencing data.Currently data from Illumina and Element Biosciences sequencers are supported.
+Demultiplex.vsh is a workflow for demultiplexing of raw sequencing data. Currently data from Illumina and Element Biosciences sequencers are supported.
 
 [![ViashHub](https://img.shields.io/badge/ViashHub-demultiplex-7a4baa.svg)](https://web.viash-hub.com/packages/demultiplex)
 [![GitHub](https://img.shields.io/badge/GitHub-viash--hub%2Fdemultiplex-blue.svg)](https://github.com/viash-hub/demultiplex)
@@ -12,7 +12,7 @@ Issues](https://img.shields.io/github/issues/viash-hub/demultiplex.svg)](https:/
 version](https://img.shields.io/badge/Viash-v0.9.1-blue)](https://viash.io)
 
 ## Workflow Overview
-The workflow executes of the following steps: 
+The workflow executes the following steps: 
 1. Unpacking the input data (when a TAR archive is provided)
 2. Run `bclconvert` or `bases2fastq`
 3. Run `falco` and convert Illumina InterOp information to csv
@@ -27,7 +27,7 @@ Two variants of the same workflow are provided, depending on the flexibility in 
 
 ### Test data
 
-We have provided test data at `gs://viash-hub-test-data/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2`, but please feel free to bring your own. The URL of the test data can be provided as-is to the workflow, or you can download download everything and specify a local path.
+We have provided test data at `gs://viash-hub-test-data/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2`, but please feel free to bring your own. The URL of the test data can be provided as-is to the workflow, or you can download everything and specify a local path.
 
 ### Setup
 
@@ -37,7 +37,7 @@ In order to use the workflows in this package, you'll need to do the following:
 
 ### Setting up SCM
 
-In order to let nextflow use any viash-hub workflow, you need to setup a [SCM](https://www.nextflow.io/docs/latest/git.html#git-configuration) file. This can be done once by creating `$HOME/.nextflow/scm` and adding the following:
+In order to let nextflow use the viash-hub workflows, you need to setup a [SCM](https://www.nextflow.io/docs/latest/git.html#git-configuration) file. This can be done once by creating `$HOME/.nextflow/scm` and adding the following:
 ```
 providers {
    vsh {
@@ -83,7 +83,7 @@ When starting nextflow using the CLI, you can use `-c` to provide the file to ne
 ### Example
 
 ```bash
-nextflow run https://packages.viash-hub.com/vsh/demultiplex \
+nextflow run vsh/demultiplex \
 -r v0.3.4 \
 -main-script target/nextflow/runner/main.nf \
 --input "gs://viash-hub-test-data/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2"  \
