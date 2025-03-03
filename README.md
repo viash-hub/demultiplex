@@ -52,7 +52,7 @@ Alternatively, a custom location for the SCM file can be specified using the `NX
 You can check if everything is working by getting the `--help` for a workflow:
 ```bash
 nextflow run \
-https://packages.viash-hub.com/vsh/demultiplex \
+vsh/demultiplex \
 -r v0.3.4 \
 --help
 ```
