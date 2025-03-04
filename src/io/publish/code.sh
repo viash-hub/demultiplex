@@ -3,7 +3,6 @@
 set -eo pipefail
 
 declare -A input_output_mapping=(["par_input"]="par_output" 
-                                 ["par_input_falco"]="par_output_falco" 
                                  ["par_input_multiqc"]="par_output_multiqc"
                                  ["par_input_run_information"]="par_output_run_information"
                                 )
@@ -23,4 +22,12 @@ do
 
     echo "Output files for $output_location:"
     ls "$output_location"
+done
+
+echo "Grouping output from $par_input_falco into $par_output_falco"
+mkdir -p "$par_output_falco"
+IFS=";" read -ra falco_inputs <<< $par_input_falco
+for falco_dir in "${falco_inputs[@]}"; do
+    echo "Copying contents of $falco_dir"
+    find -H -D exec "$falco_dir" -type f -maxdepth 1 -exec cp -t "$par_output_falco" {} +
 done

@@ -12,6 +12,7 @@ argument_groups:
         description: Directory to write falco output to
         type: file
         required: true
+        multiple: true
       - name: "--input_multiqc"
         description: Location where to write the MultiQC report to.
         type: file

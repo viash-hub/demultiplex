@@ -13,10 +13,12 @@ workflow run_wf {
         // Gather the following state for all samples
         def forward_fastqs = states.collect{it.forward_input}.flatten()
         def reverse_fastqs = states.collect{it.reverse_input}.findAll{it != null}.flatten()
+        def falco_dirs = states.collect{it.falco_dir}
         
         def resultState = [
           "output_forward": forward_fastqs,
           "output_reverse": reverse_fastqs,
+          "output_falco": falco_dirs,
           // The join ID is the same across all samples from the same run
           "_meta": ["join_id": states[0]._meta.join_id]
         ]
