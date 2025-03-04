@@ -16,6 +16,9 @@ argument_groups:
         type: file
         required: false
         multiple: true
+      - name: "--falco_dir"
+        type: file
+        required: true
   - name: Output arguments
     arguments:
       - name: --output_forward
@@ -28,6 +31,11 @@ argument_groups:
         direction: output
         multiple: true
         required: false
+      - name: "--output_falco"
+        type: file
+        direction: output
+        required: true
+        multiple: true
 resources:
   - type: nextflow_script
     path: main.nf

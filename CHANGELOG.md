@@ -1,5 +1,12 @@
 # demultiplex v0.3.5
 
+## Breaking changes
+
+* The `demultiplex` workflow now outputs a list of directories
+  for the `output_falco` argument (one for each barcode) instead of one directory
+  for the complete run. The output from the `runner` workflow remained
+  unchanged (PR #33).
+
 ## Minor updates
 
 * In case Illumina data is detected in the input folder, check for the presence of the 'copyComplete.txt' file.
