@@ -1,3 +1,9 @@
+# demultiplex v0.x.y
+
+## Under the hood
+- Bumped the version of Viash to v0.9.2
+- Moved the test resources to their new location
+
 # demultiplex v0.3.5
 
 ## Breaking changes
