@@ -30,8 +30,8 @@ workflow run_wf {
               return true
             }
             // [Data], [BCLConvert_Data] for illumina
-            // [Samples] for Element Biosciences
-            if (header in ["Data", "Samples", "BCLConvert_Data"]) {
+            // [Samples] or sometimes [SAMPLES] for Element Biosciences
+            if (header.toLowerCase() in ["data", "samples", "bclconvert_data"]) {
               println "Found header [${header}], start parsing."
               start_parsing = true
               return

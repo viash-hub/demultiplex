@@ -1,3 +1,9 @@
+# demultiplex v0.3.6
+
+## Minor updates
+
+* Allow letter case variants for headers when looking for sample information in run information CSV (PR #).
+
 # demultiplex v0.3.5
 
 ## Breaking changes
