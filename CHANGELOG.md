@@ -1,3 +1,9 @@
+# demultiplex v0.3.7
+
+## Minor updates
+
+* Ignore lines starting with '#' when parsing run information CSV (PR #).
+
 # demultiplex v0.3.6
 
 ## Minor updates
