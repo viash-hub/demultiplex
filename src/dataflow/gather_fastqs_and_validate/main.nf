@@ -17,8 +17,8 @@ workflow run_wf {
         println "Processing run information file ${sample_sheet}"
         csv_lines = sample_sheet.splitCsv(header: false, sep: ',')
         csv_lines.any { csv_items ->
-          if (csv_items.isEmpty()) {
-            // skip empty line
+          if (csv_items.isEmpty() || csv_items[0].startsWith("#")) {
+            // skip empty or commented line 
             return
           }
           def possible_header = csv_items[0]
