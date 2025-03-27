@@ -2,7 +2,7 @@
 
 ## Bug fixes
 
-* Provide a proper error when a FASTQ file is empty after demultiplexing (PR #) 
+* Provide a proper error when a FASTQ file is empty after demultiplexing (PR #40).
 
 # demultiplex v0.3.7
 
