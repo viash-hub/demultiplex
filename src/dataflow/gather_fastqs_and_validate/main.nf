@@ -1,7 +1,6 @@
 import java.util.zip.GZIPInputStream
 import java.nio.file.Files
 import java.io.BufferedInputStream
-import java.lang.reflect.InvocationTargetException
 
 def is_empty(file_to_check){
   /* 
