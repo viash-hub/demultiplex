@@ -1,3 +1,9 @@
+# demultiplex v0.3.8
+
+## Bug fixes
+
+* Provide a proper error when a FASTQ file is empty after demultiplexing (PR #) 
+
 # demultiplex v0.3.7
 
 ## Minor updates

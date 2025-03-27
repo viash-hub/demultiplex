@@ -1,3 +1,27 @@
+import java.util.zip.GZIPInputStream
+import java.nio.file.Files
+import java.io.BufferedInputStream
+import java.lang.reflect.InvocationTargetException
+
+def is_empty(file_to_check){
+  /* 
+  Checks if a file contains has content
+  */
+  if (file_to_check.size() == 0) {
+    return true
+  }
+  def input_stream = Files.newInputStream(file_to_check)
+  def gzInputStream
+  try {
+    gzInputStream = new GZIPInputStream(new BufferedInputStream(input_stream))
+  } catch (java.io.EOFException ex) {
+    // This is not a gzipfile...
+    return false
+  }
+  def read_one_byte = gzInputStream.read()
+  return read_one_byte == -1
+}
+
 workflow run_wf {
   take:
     input_ch
@@ -78,6 +102,9 @@ workflow run_wf {
             "Found forward: ${forward_fastq} and reverse: ${reverse_fastq}."
           println "Found ${forward_fastq.size()} forward and ${reverse_fastq.size()} reverse " +
             "fastq files for sample ${sample_id}"
+
+          assert forward_fastq.every{!is_empty(it)} && reverse_fastq.every{!is_empty(it)}:
+            "A fastq file for sample '${sample_id}' appears to be empty!"
           def fastqs_state = [
             "fastq_forward": forward_fastq,
             "fastq_reverse": reverse_fastq,
