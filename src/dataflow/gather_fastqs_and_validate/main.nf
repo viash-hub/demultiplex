@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 
 def is_empty(file_to_check){
   /* 
-  Checks if a file contains has content
+  Checks if a file has content
   */
   if (file_to_check.size() == 0) {
     return true
