@@ -54,6 +54,16 @@ argument_groups:
         direction: "output"
         required: true
         default: "$id/run_information.csv"
+      - name: "--output_bcl_convert_reports"
+        type: file
+        direction: "output"
+        required: false
+        default: "$id/bcl_convert_reports"
+      - name: "--output_bases2fastq_report"
+        type: file
+        direction: "output"
+        required: false
+        default: "$id/bases2fastq_report.html"
   - name: "Other arguments"
     arguments:
       - name: --skip_copycomplete_check

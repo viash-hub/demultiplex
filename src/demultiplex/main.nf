@@ -124,7 +124,7 @@ workflow run_wf {
             bcl_input_directory: state.input,
             sample_sheet: state.run_information,
             output_directory: state.output,
-            reports: "reports",
+            reports: state.output_bcl_convert_reports,
             logs: "logs"
           ]
         },
@@ -145,6 +145,7 @@ workflow run_wf {
           "analysis_directory": "input",
           "run_manifest": "run_information",
           "output_directory": "output",
+          "report": "output_bases2fastq_report",
         ],
         args: [
           "no_projects": true, // Do not put output files in a subfolder for project
@@ -225,6 +226,17 @@ workflow run_wf {
           state + [ "output_multiqc" : result.output_report ]
         }
       )
+
+      | map { id, state ->
+        def newState = state.clone()
+        if (state.demultiplexer == "bclconvert") {
+          newState.remove("output_bases2fastq_report")
+        } else if (state.demultiplexer == "bases2fastq") {
+          newState.remove("output_bcl_convert_reports")
+        }
+        return [id, newState]
+      }
+
       | setState(
         [
           //"_meta": "_meta",
@@ -232,6 +244,8 @@ workflow run_wf {
           "output_falco": "output_falco",
           "output_multiqc": "output_multiqc",
           "output_run_information": "run_information",
+          "output_bcl_convert_reports": "output_bcl_convert_reports",
+          "output_bases2fastq_report": "output_bases2fastq_report"
         ]
       )
 

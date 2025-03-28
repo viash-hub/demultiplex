@@ -29,7 +29,7 @@ workflow test_illumina {
          assert it.isDirectory(): "Expected falco output to be a directory"
       }
       assert state.output_multiqc.isFile(): "Expected multiQC output to be a file"
-      fastq_files = state.output.listFiles().collect{it.name}
+      fastq_files = state.output.listFiles().findAll { it.name.endsWith('.fastq.gz') }.collect { it.name }
       assert ["Undetermined_S0_L001_R1_001.fastq.gz", "Sample23_S3_L001_R1_001.fastq.gz", 
         "sampletest_S4_L001_R1_001.fastq.gz", "Sample1_S1_L001_R1_001.fastq.gz", 
         "SampleA_S2_L001_R1_001.fastq.gz"].toSet() == fastq_files.toSet(): \
@@ -58,6 +58,17 @@ workflow test_illumina {
                                    |""".stripMargin()
       assert state.output_run_information.text.replaceAll("\r\n", "\n") == expected_run_information
     }
+    | map {id, state ->
+      assert state.output_reports != null && state.output_reports.isDirectory(): 
+        "Expected BCL Convert reports to be a directory"
+        
+      def report_files = state.output_reports.listFiles()
+      assert report_files.size() > 0: "Expected BCL Convert reports to contain files"
+      
+      def demux_stats = report_files.find { it.name == "Demultiplex_Stats.csv" }
+      assert demux_stats != null: "Expected to find demultiplexing statistics report"
+      assert demux_stats.length() > 0: "Demultiplexing statistics report should not be empty"
+    }
 }
 
 workflow test_bases2fastq {
@@ -80,5 +91,10 @@ workflow test_bases2fastq {
       assert state.output.isDirectory(): "Expected bases2fastq output to be a directory"
       state.output_falco.each{assert it.isDirectory(): "Expected falco output to be a directory"}
       assert state.output_multiqc.isFile(): "Expected multiQC output to be a file"
+
+      println "ID: ${id}"
+      println "State: ${state}"
+
+      assert state.output_bases2fastq_report.isFile(): "Expected bases2fastq report to be a file"
     }
 }
