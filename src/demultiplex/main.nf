@@ -124,7 +124,7 @@ workflow run_wf {
             bcl_input_directory: state.input,
             sample_sheet: state.run_information,
             output_directory: state.output,
-            reports: state.output_bcl_convert_reports,
+            reports: state.demultiplex_reports,
             logs: "logs"
           ]
         },
@@ -141,12 +141,14 @@ workflow run_wf {
       | bases2fastq.run(
         runIf: {id, state -> state.demultiplexer in ["bases2fastq"]},
         directives: [label: ["highmem", "midcpu"]],
-        fromState: [
-          "analysis_directory": "input",
-          "run_manifest": "run_information",
-          "output_directory": "output",
-          "report": "output_bases2fastq_report",
-        ],
+        fromState: { id, state ->
+          [
+            "analysis_directory": state.input,
+            "run_manifest": state.run_information,
+            "output_directory": state.output,
+            "report": state.demultiplex_reports + "/report.html",
+          ]
+        },
         args: [
           "no_projects": true, // Do not put output files in a subfolder for project
           //"split_lanes": true,
@@ -244,8 +246,7 @@ workflow run_wf {
           "output_falco": "output_falco",
           "output_multiqc": "output_multiqc",
           "output_run_information": "run_information",
-          "output_bcl_convert_reports": "output_bcl_convert_reports",
-          "output_bases2fastq_report": "output_bases2fastq_report"
+          "demultiplex_reports": "demultiplex_reports"
         ]
       )
 
