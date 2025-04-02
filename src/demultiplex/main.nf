@@ -124,7 +124,7 @@ workflow run_wf {
             bcl_input_directory: state.input,
             sample_sheet: state.run_information,
             output_directory: state.output,
-            reports: state.demultiplex_reports,
+            reports: state.demultiplexer_logs,
             logs: "logs"
           ]
         },
@@ -146,7 +146,7 @@ workflow run_wf {
             "analysis_directory": state.input,
             "run_manifest": state.run_information,
             "output_directory": state.output,
-            "report": state.demultiplex_reports + "/report.html",
+            "report": state.demultiplexer_logs + "/report.html",
           ]
         },
         args: [
@@ -229,16 +229,6 @@ workflow run_wf {
         }
       )
 
-      | map { id, state ->
-        def newState = state.clone()
-        if (state.demultiplexer == "bclconvert") {
-          newState.remove("output_bases2fastq_report")
-        } else if (state.demultiplexer == "bases2fastq") {
-          newState.remove("output_bcl_convert_reports")
-        }
-        return [id, newState]
-      }
-
       | setState(
         [
           //"_meta": "_meta",
@@ -246,7 +236,7 @@ workflow run_wf {
           "output_falco": "output_falco",
           "output_multiqc": "output_multiqc",
           "output_run_information": "run_information",
-          "demultiplex_reports": "demultiplex_reports"
+          "demultiplexer_logs": "demultiplexer_logs"
         ]
       )
 

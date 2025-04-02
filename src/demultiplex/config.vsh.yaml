@@ -54,12 +54,11 @@ argument_groups:
         direction: "output"
         required: true
         default: "$id/run_information.csv"
-      - name: "--demultiplex_reports"
+      - name: "--demultiplexer_logs"
         type: file
-        # multiple: true
         direction: "output"
         required: false
-        default: "$id/demultiplex_reports"
+        default: "$id/demultiplexer_logs"
   - name: "Other arguments"
     arguments:
       - name: --skip_copycomplete_check
