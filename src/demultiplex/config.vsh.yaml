@@ -56,7 +56,7 @@ argument_groups:
         default: "$id/run_information.csv"
       - name: "--demultiplexer_logs"
         type: file
-        direction: "output"
+        direction: output
         required: false
         default: "$id/demultiplexer_logs"
   - name: "Other arguments"

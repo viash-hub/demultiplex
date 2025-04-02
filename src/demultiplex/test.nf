@@ -62,10 +62,10 @@ workflow test_illumina {
       println "ID: ${id}"
       println "State: ${state}"
 
-      assert state.demultiplex_reports != null && state.demultiplex_reports.isDirectory(): 
+      assert state.demultiplexer_logs != null && state.demultiplexer_logs.isDirectory(): 
         "Expected BCL Convert reports to be a directory"
         
-      def report_files = state.demultiplex_reports.listFiles()
+      def report_files = state.demultiplexer_logs.listFiles()
       assert report_files.size() > 0: "Expected BCL Convert reports to contain files"
       
       def demux_stats = report_files.find { it.name == "Demultiplex_Stats.csv" }
@@ -98,8 +98,7 @@ workflow test_bases2fastq {
       println "ID: ${id}"
       println "State: ${state}"
 
-      assert state.demultiplex_reports.isDirectory(): "Expected bases2fastq report to be a directory"
-      assert state.demultiplex_reports.listFiles().find { it.name == "report.html" } != null: 
+      assert state.demultiplexer_logs.listFiles().find { it.name == "report.html" } != null: 
         "Expected to find bases2fastq report.html in demultiplex_reports directory"
     }
 }
