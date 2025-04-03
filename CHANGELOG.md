@@ -10,6 +10,8 @@
 
 * Ignore lines starting with '#' when parsing run information CSV (PR #39).
 
+* Output demultiplexer logs and metrics (PR #41).
+
 # demultiplex v0.3.6
 
 ## Minor updates
