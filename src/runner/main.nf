@@ -28,6 +28,7 @@ workflow run_wf {
             "output": "$id/fastq",
             "output_falco": "$id/qc/fastqc",
             "output_multiqc": "$id/qc/multiqc_report.html",
+            "demultiplexer_logs": "$id/demultiplexer_logs",
           ]
           if (state.run_information) {
             state_to_pass += ["output_run_information": state.run_information.getName()] 
@@ -48,6 +49,11 @@ workflow run_wf {
           def falco_output_1 = (id2 == "run") ? state.falco_output : "${id2}/" + state.falco_output
           def multiqc_output_1 = (id2 == "run") ? state.multiqc_output : "${id2}/" + state.multiqc_output
           def run_information_output_1 = (id2 == "run") ? "${state.output_run_information.getName()}" : "${id2}/${state.output_run_information.getName()}"
+          def demultiplexer_logs_output = (id2 == "run") ? state.demultiplexer_logs : "${id2}/${state.demultiplexer_logs.getName()}"
+
+          println("Fastq output directory: ${state.fastq_output}")
+          println("Demultiplexer logs directory: ${state.demultiplexer_logs}")
+          println("Demultiplexer logs output: ${demultiplexer_logs_output}")
 
           if (id2 == "run") {
             println("Publising to ${params.publish_dir}")
@@ -60,10 +66,12 @@ workflow run_wf {
             input_falco: state.output_falco,
             input_multiqc: state.output_multiqc,
             input_run_information: state.output_run_information,
+            input_demultiplexer_logs: state.demultiplexer_logs,
             output: fastq_output_1,
             output_falco: falco_output_1,
             output_multiqc: multiqc_output_1,
             output_run_information: run_information_output_1,
+            output_demultiplexer_logs: demultiplexer_logs_output,
           ]
         },
         toState: { id, result, state -> [:] },

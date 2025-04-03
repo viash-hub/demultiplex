@@ -57,7 +57,7 @@ argument_groups:
       - name: "--demultiplexer_logs"
         type: file
         direction: output
-        required: false
+        required: true
         default: "$id/demultiplexer_logs"
   - name: "Other arguments"
     arguments:

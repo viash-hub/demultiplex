@@ -125,13 +125,14 @@ workflow run_wf {
             sample_sheet: state.run_information,
             output_directory: state.output,
             reports: state.demultiplexer_logs,
-            logs: "logs"
+            logs: state.demultiplexer_logs,
           ]
         },
         toState: {id, result, state -> 
           def toAdd = [
             "output_demultiplexer" : result.output_directory,
             "run_id": id,
+            "demultiplexer_logs": result.reports,
           ]
           def newState = state + toAdd
           return newState
@@ -147,6 +148,7 @@ workflow run_wf {
             "run_manifest": state.run_information,
             "output_directory": state.output,
             "report": state.demultiplexer_logs + "/report.html",
+            "logs": state.demultiplexer_logs,
           ]
         },
         args: [
@@ -159,6 +161,8 @@ workflow run_wf {
           def toAdd = [
             "output_demultiplexer" : result.output_directory,
             "run_id": id,
+            "demultiplexer_logs": result.logs,
+
           ]
           def newState = state + toAdd
           return newState
