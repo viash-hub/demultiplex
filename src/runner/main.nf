@@ -51,10 +51,6 @@ workflow run_wf {
           def run_information_output_1 = (id2 == "run") ? "${state.output_run_information.getName()}" : "${id2}/${state.output_run_information.getName()}"
           def demultiplexer_logs_output = (id2 == "run") ? state.demultiplexer_logs : "${id2}/${state.demultiplexer_logs.getName()}"
 
-          println("Fastq output directory: ${state.fastq_output}")
-          println("Demultiplexer logs directory: ${state.demultiplexer_logs}")
-          println("Demultiplexer logs output: ${demultiplexer_logs_output}")
-
           if (id2 == "run") {
             println("Publising to ${params.publish_dir}")
           } else {
