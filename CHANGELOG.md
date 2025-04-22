@@ -1,3 +1,9 @@
+# demultiplex v0.3.9
+
+## Minor changes
+
+* Bump viash to 0.9.3 (PR #43).
+
 # demultiplex v0.3.8
 
 ## Bug fixes
