@@ -4,11 +4,11 @@
 
 * Fix defaults for output arguments in nextflow schema's.
 
-* Fix an issue where an interger being passed to a argument with `type: double` resulted in an error (PR #).
+* Fix an issue where an interger being passed to a argument with `type: double` resulted in an error (PR #44).
 
 ## Minor changes
 
-* Bump viash to 0.9.4, which add support for nextflow versions starting major version 25.01 (PR #).
+* Bump viash to 0.9.4, which add support for nextflow versions starting major version 25.01 (PR #44).
 
 # demultiplex v0.3.9
 
