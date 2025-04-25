@@ -1,4 +1,4 @@
-# demultiplex v0.3.10
+# demultiplex v0.3.9
 
 ## Bug fixes
 
@@ -8,13 +8,7 @@
 
 ## Minor changes
 
-* Bump viash to 0.9.4, which adds support for nextflow versions starting major version 25.01 (PR #44).
-
-# demultiplex v0.3.9
-
-## Minor changes
-
-* Bump viash to 0.9.3 (PR #43).
+* Bump viash to 0.9.4, which adds support for nextflow versions starting major version 25.01 (PR #43 and #44).
 
 # demultiplex v0.3.8
 
