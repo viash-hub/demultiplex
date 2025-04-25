@@ -1,3 +1,15 @@
+# demultiplex v0.3.10
+
+## Bug fixes
+
+* Fix defaults for output arguments in nextflow schema's.
+
+* Fix an issue where an integer being passed to a argument with `type: double` resulted in an error (PR #44).
+
+## Minor changes
+
+* Bump viash to 0.9.4, which adds support for nextflow versions starting major version 25.01 (PR #44).
+
 # demultiplex v0.3.9
 
 ## Minor changes
