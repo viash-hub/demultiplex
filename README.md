@@ -9,7 +9,7 @@ License](https://img.shields.io/github/license/viash-hub/demultiplex.svg)](https
 [![GitHub
 Issues](https://img.shields.io/github/issues/viash-hub/demultiplex.svg)](https://github.com/viash-hub/demultiplex/issues)
 [![Viash
-version](https://img.shields.io/badge/Viash-v0.9.1-blue)](https://viash.io)
+version](https://img.shields.io/badge/Viash-v0.9.4-blue)](https://viash.io)
 
 ## Workflow Overview
 The workflow executes the following steps: 
@@ -53,7 +53,7 @@ You can check if everything is working by getting the `--help` for a workflow:
 ```bash
 nextflow run \
 vsh/demultiplex \
--r v0.3.4 \
+-r v0.3.9 \
 --help
 ```
 
@@ -84,7 +84,7 @@ When starting nextflow using the CLI, you can use `-c` to provide the file to ne
 
 ```bash
 nextflow run vsh/demultiplex \
--r v0.3.4 \
+-r v0.3.9 \
 -main-script target/nextflow/runner/main.nf \
 --input "gs://viash-hub-test-data/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2"  \
 --demultiplexer bclconvert \
