@@ -1,3 +1,26 @@
+import java.util.zip.GZIPInputStream
+import java.nio.file.Files
+import java.io.BufferedInputStream
+
+def is_empty(file_to_check){
+  /* 
+  Checks if a file has content
+  */
+  if (file_to_check.size() == 0) {
+    return true
+  }
+  def input_stream = Files.newInputStream(file_to_check)
+  def gzInputStream
+  try {
+    gzInputStream = new GZIPInputStream(new BufferedInputStream(input_stream))
+  } catch (java.io.EOFException ex) {
+    // This is not a gzipfile...
+    return false
+  }
+  def read_one_byte = gzInputStream.read()
+  return read_one_byte == -1
+}
+
 workflow run_wf {
   take:
     input_ch
@@ -17,8 +40,8 @@ workflow run_wf {
         println "Processing run information file ${sample_sheet}"
         csv_lines = sample_sheet.splitCsv(header: false, sep: ',')
         csv_lines.any { csv_items ->
-          if (csv_items.isEmpty()) {
-            // skip empty line
+          if (csv_items.isEmpty() || csv_items[0].startsWith("#")) {
+            // skip empty or commented line 
             return
           }
           def possible_header = csv_items[0]
@@ -30,8 +53,8 @@ workflow run_wf {
               return true
             }
             // [Data], [BCLConvert_Data] for illumina
-            // [Samples] for Element Biosciences
-            if (header in ["Data", "Samples", "BCLConvert_Data"]) {
+            // [Samples] or sometimes [SAMPLES] for Element Biosciences
+            if (header.toLowerCase() in ["data", "samples", "bclconvert_data"]) {
               println "Found header [${header}], start parsing."
               start_parsing = true
               return
@@ -78,6 +101,9 @@ workflow run_wf {
             "Found forward: ${forward_fastq} and reverse: ${reverse_fastq}."
           println "Found ${forward_fastq.size()} forward and ${reverse_fastq.size()} reverse " +
             "fastq files for sample ${sample_id}"
+
+          assert forward_fastq.every{!is_empty(it)} && reverse_fastq.every{!is_empty(it)}:
+            "A fastq file for sample '${sample_id}' appears to be empty!"
           def fastqs_state = [
             "fastq_forward": forward_fastq,
             "fastq_reverse": reverse_fastq,

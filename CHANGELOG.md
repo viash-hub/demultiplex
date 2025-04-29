@@ -1,8 +1,38 @@
-# demultiplex v0.x.y
+# demultiplex v0.3.10
 
-## Under the hood
-- Bumped the version of Viash to v0.9.2
-- Moved the test resources to their new location
+## Minor changes
+
+* Moved the test resources to their new location (PR #37).
+
+# demultiplex v0.3.9
+
+## Bug fixes
+
+* Fix defaults for output arguments in nextflow schema's.
+
+* Fix an issue where an integer being passed to a argument with `type: double` resulted in an error (PR #44).
+
+## Minor changes
+
+* Bump viash to 0.9.4, which adds support for nextflow versions starting major version 25.01 (PR #43 and #44).
+
+# demultiplex v0.3.8
+
+## Bug fixes
+
+* Provide a proper error when a FASTQ file is empty after demultiplexing (PR #40).
+
+# demultiplex v0.3.7
+
+## Minor updates
+
+* Ignore lines starting with '#' when parsing run information CSV (PR #39).
+
+# demultiplex v0.3.6
+
+## Minor updates
+
+* Allow letter case variants for headers when looking for sample information in run information CSV (PR #38).
 
 # demultiplex v0.3.5
 
