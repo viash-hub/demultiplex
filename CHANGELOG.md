@@ -1,3 +1,9 @@
+# demultiplex v0.3.10
+
+## Minor changes
+
+* Moved the test resources to their new location (PR #37).
+
 # demultiplex v0.3.9
 
 ## Bug fixes
