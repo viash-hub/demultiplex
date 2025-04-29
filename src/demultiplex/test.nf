@@ -104,9 +104,6 @@ workflow test_bases2fastq {
       state.output_falco.each{assert it.isDirectory(): "Expected falco output to be a directory"}
       assert state.output_multiqc.isFile(): "Expected multiQC output to be a file"
 
-      println "ID: ${id}"
-      println "State: ${state}"
-
       def logs_files = state.demultiplexer_logs.listFiles()
       println "Logs files: ${logs_files}"
       assert logs_files.size() > 0: "Expected bases2fastq logs dir to contain files"

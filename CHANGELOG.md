@@ -4,6 +4,8 @@
 
 * Bump viash to 0.9.3 (PR #43).
 
+* Output demultiplexer logs and metrics (PR #41).
+  
 # demultiplex v0.3.8
 
 ## Bug fixes
@@ -15,8 +17,6 @@
 ## Minor updates
 
 * Ignore lines starting with '#' when parsing run information CSV (PR #39).
-
-* Output demultiplexer logs and metrics (PR #41).
 
 # demultiplex v0.3.6
 
