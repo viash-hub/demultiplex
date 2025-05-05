@@ -11,6 +11,23 @@ Issues](https://img.shields.io/github/issues/viash-hub/demultiplex.svg)](https:/
 [![Viash
 version](https://img.shields.io/badge/Viash-v0.9.4-blue)](https://viash.io)
 
+## Introcuction
+This workflow is dessigned to demultiplex raw RNA-seq sequencing data from Illumina and Element Biosciences sequencers. 
+
+The workflow is built in a modular fashion, where most of the base functionality is provided by components from
+[`biobox`](https://www.viash-hub.com/packages/biobox/latest) supplemented by custom base components and workflow components in this package. Each of these components can be used independently as stand-alone modules with a 
+standardized interface.
+
+The full workflow can be run in two ways:
+
+1.  Run the [main
+    workflow](https://www.viash-hub.com/packages/demultiplex/v0.3.4/components/demultiplex)
+    containing the main functionality.
+2.  Run the [(opinianated)
+    `runner`](https://www.viash-hub.com/packages/demultiplex/v0.3.4/components/runner)
+    where a number of choices (input/output structure and location) have
+    been made.
+
 ## Workflow Overview
 The workflow executes the following steps: 
 1. Unpacking the input data (when a TAR archive is provided)
@@ -18,7 +35,7 @@ The workflow executes the following steps:
 3. Run `falco` and convert Illumina InterOp information to csv
 4. Run `multiqc` to generate a report
 
-## Usage
+## Example usage
 
 Two variants of the same workflow are provided, depending on the flexibility in the ouput structure required:
 
@@ -27,7 +44,7 @@ Two variants of the same workflow are provided, depending on the flexibility in 
 
 ### Test data
 
-We have provided test data at `gs://viash-hub-test-data/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2`, but please feel free to bring your own. The URL of the test data can be provided as-is to the workflow, or you can download everything and specify a local path.
+We have provided test data at `gs://viash-hub-test-data/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2` (Illumina), but please feel free to bring your own. The URL of the test data can be provided as-is to the workflow, or you can download everything and specify a local path.
 
 ### Setup
 
@@ -57,6 +74,78 @@ vsh/demultiplex \
 --help
 ```
 
+### Run from Viash Hub
+
+1. Open [Viash Hub](https://www.viash-hub.com) and browse to the [demultiplex
+component](https://www.viash-hub.com/packages/demultiplex/v0.3.4/components/demultiplex).
+Press the ‘Launch’ button and follow the instructions.
+
+![](assets/demultiplex-launch-small.png)
+
+1. We will start an example run and set profile to `docker`.
+
+![](assets/demultiplex-launch-parameters-1.png)
+
+3. In the next step, we provide the paramters as follows and leave the rest as defalut:
+
+- `input`:
+  `gs://viash-hub-test-data/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2`
+
+![](assets/demultiplex-launch-parameters-2.png)
+
+Press the ‘Launch’ button at the end to get the instructions on how to
+run the workflow from the CLI.
+
+
+### Run using NF-Tower / Seqera Cloud
+
+It’s possible to run the workflow directly from [Seqera
+Cloud](https://cloud.seqera.io). The necessary [Nextflow schema
+file](https://nextflow-io.github.io/nf-schema/latest/nextflow_schema/nextflow_schema_specification/)
+has been built and provided with the workflows in order to use the
+form-based input.
+
+1. Select the option to run the workflow using Seqera Cloud. You
+will need to create an API token for your account. Once this token is
+filled in in the corresponding field, we will get the option to select
+a ‘Workspace’ and a ‘Compute environment’.
+
+![](assets/demultiplex-launch-parameters-3.png)
+
+2. Provide the parameters similar to the previous step.
+
+3. In the next screen, pressing the ‘Launch’ button will actually start the
+workflow on Seqera Cloud. A message is shown when the submit was
+successful.
+
+![](assets/demultiplex-launch-parameters-4.png)
+
+### Run from the CLI
+
+Running from the CLI directly without using Viash hub is possible as well. The
+easiest is to use the integrated help functionality, for instance
+using the following:
+
+``` bash
+ nextflow run https://packages.viash-hub.com/vsh/demultiplex.git \
+  -revision v0.3.4 \
+  -main-script target/nextflow/workflows/runner/main.nf \
+  --help
+```
+
+Having this project available locally, you can run the following command:
+
+```bash
+nextflow run vsh/demultiplex \
+-r v0.3.9 \
+-main-script target/nextflow/runner/main.nf \
+--input "gs://viash-hub-test-data/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2"  \
+--demultiplexer bclconvert \
+--publish_dir example_output/ \
+-profile docker \
+-c labels.config
+```
+
 ### (Optional) Resource usage tuning
 
 Nextflow's labels can be used to specify the amount of resources a process can use. This workflow uses the following labels for CPU and memory:
@@ -79,19 +168,6 @@ withLabel: highmem { memory = 8.GB }
 ```
 
 When starting nextflow using the CLI, you can use `-c` to provide the file to nextflow and overwrite the defaults.
-
-### Example
-
-```bash
-nextflow run vsh/demultiplex \
--r v0.3.9 \
--main-script target/nextflow/runner/main.nf \
---input "gs://viash-hub-test-data/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2"  \
---demultiplexer bclconvert \
---publish_dir example_output/ \
--profile docker \
--c labels.config
-```
 
 ## Acknowledgements
 
