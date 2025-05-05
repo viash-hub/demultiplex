@@ -31,7 +31,7 @@ The full workflow can be run in two ways:
 ## Workflow Overview
 The workflow executes the following steps: 
 1. Unpacking the input data (when a TAR archive is provided)
-2. Run `bclconvert` or `bases2fastq`
+2. Run `bclconvert` or `bases2fastq` 
 3. Run `falco` and convert Illumina InterOp information to csv
 4. Run `multiqc` to generate a report
 
@@ -45,6 +45,9 @@ Two variants of the same workflow are provided, depending on the flexibility in 
 ### Test data
 
 We have provided test data at `gs://viash-hub-test-data/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2` (Illumina), but please feel free to bring your own. The URL of the test data can be provided as-is to the workflow, or you can download everything and specify a local path.
+
+The input data should follow the structure of either Illumina or Element Biosciences sequencers. The workflow will automatically detect which demultiplexer to use (`bclconvert` or `bases2fastq`) based on the 
+presence of either `SampleSheet.csv` or `RunParameters.xml` in the input directory. Demultiplexer can also be set explicitly using the `--demultiplexer` parameter.
 
 ### Setup
 
