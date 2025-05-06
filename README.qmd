@@ -53,7 +53,7 @@ Two variants of the same workflow are provided, depending on the flexibility in 
 
 ### Test data
 
-We have provided test data at `gs://viash-hub-test-data/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2` (Illumina), but please feel free to bring your own. The URL of the test data can be provided as-is to the workflow, or you can download everything and specify a local path.
+We have provided test data at `gs://viash-hub-resources/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2` (Illumina), but please feel free to bring your own. The URL of the test data can be provided as-is to the workflow, or you can download everything and specify a local path.
 
 The input data should follow the structure of either Illumina or Element Biosciences sequencers. The workflow will automatically detect which demultiplexer to use (`bclconvert` or `bases2fastq`) based on the 
 presence of either `SampleSheet.csv` or `RunParameters.xml` in the input directory. Demultiplexer can also be set explicitly using the `--demultiplexer` parameter.
@@ -79,7 +79,7 @@ Press the ‘Launch’ button and follow the instructions.
 3. In the next step, we provide the paramters as follows and leave the rest as defalut:
 
 - `input`:
-  `gs://viash-hub-test-data/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2`
+  `gs://viash-hub-resources/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2`
 
 ![](assets/demultiplex-launch-parameters-2.png)
 
@@ -138,8 +138,8 @@ easiest is to use the integrated help functionality, for instance
 using the following:
 
 ``` bash
- nextflow run https://packages.viash-hub.com/vsh/demultiplex.git \
-  -revision v0.3.4 \
+ nextflow run vsh/demultiplex \
+  -revision v0.3.9 \
   -main-script target/nextflow/workflows/runner/main.nf \
   --help
 ```
@@ -150,11 +150,12 @@ Having this project available locally, you can run the following command:
 nextflow run vsh/demultiplex \
 -r v0.3.9 \
 -main-script target/nextflow/runner/main.nf \
---input "gs://viash-hub-test-data/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2"  \
+--input "gs://viash-hub-resources/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2"  \
 --demultiplexer bclconvert \
+--skip_copycomplete_check \
 --publish_dir example_output/ \
 -profile docker \
--c labels.config
+-c src/config/labels.config
 ```
 
 ### (Optional) Resource usage tuning
