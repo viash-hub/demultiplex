@@ -1,3 +1,11 @@
+---
+format: gfm
+---
+```{r setup, include=FALSE}
+project <- yaml::read_yaml("_viash.yaml")
+license <- paste0(project$links$repository, "/blob/main/LICENSE")
+```
+
 # Demultiplex.vsh
 
 Demultiplex.vsh is a workflow for demultiplexing of raw sequencing data. Currently data from Illumina and Element Biosciences sequencers are supported.
@@ -12,7 +20,7 @@ Issues](https://img.shields.io/github/issues/viash-hub/demultiplex.svg)](https:/
 version](https://img.shields.io/badge/Viash-v0.9.4-blue)](https://viash.io)
 
 ## Introcuction
-This workflow is dessigned to demultiplex raw RNA-seq sequencing data from Illumina and Element Biosciences sequencers. 
+This workflow is designed to demultiplex raw RNA-seq sequencing data from Illumina and Element Biosciences sequencers. 
 
 The workflow is built in a modular fashion, where most of the base functionality is provided by components from
 [`biobox`](https://www.viash-hub.com/packages/biobox/latest) supplemented by custom base components and workflow components in this package. Each of these components can be used independently as stand-alone modules with a 
@@ -29,6 +37,7 @@ The full workflow can be run in two ways:
     been made.
 
 ## Workflow Overview
+
 The workflow executes the following steps: 
 1. Unpacking the input data (when a TAR archive is provided)
 2. Run `bclconvert` or `bases2fastq` 
@@ -55,28 +64,6 @@ In order to use the workflows in this package, you'll need to do the following:
 * Install [nextflow](https://www.nextflow.io/docs/latest/install.html)
 * Install a nextflow compatible executor. This workflow provides a profile for [docker](https://docs.docker.com/get-started/).
 
-### Setting up SCM
-
-In order to let nextflow use the viash-hub workflows, you need to setup a [SCM](https://www.nextflow.io/docs/latest/git.html#git-configuration) file. This can be done once by creating `$HOME/.nextflow/scm` and adding the following:
-```
-providers {
-   vsh {
-    platform = 'gitlab'
-    server = "packages.viash-hub.com"
-  }
-}
-```
-
-Alternatively, a custom location for the SCM file can be specified using the `NXF_SCM_FILE` environment variable.
-
-You can check if everything is working by getting the `--help` for a workflow:
-```bash
-nextflow run \
-vsh/demultiplex \
--r v0.3.9 \
---help
-```
-
 ### Run from Viash Hub
 
 1. Open [Viash Hub](https://www.viash-hub.com) and browse to the [demultiplex
@@ -98,7 +85,6 @@ Press the ‘Launch’ button and follow the instructions.
 
 Press the ‘Launch’ button at the end to get the instructions on how to
 run the workflow from the CLI.
-
 
 ### Run using NF-Tower / Seqera Cloud
 
@@ -122,6 +108,28 @@ workflow on Seqera Cloud. A message is shown when the submit was
 successful.
 
 ![](assets/demultiplex-launch-parameters-4.png)
+
+### Setting up SCM
+
+In order to let nextflow use the viash-hub workflows, you need to setup a [SCM](https://www.nextflow.io/docs/latest/git.html#git-configuration) file. This can be done once by creating `$HOME/.nextflow/scm` and adding the following:
+```
+providers {
+   vsh {
+    platform = 'gitlab'
+    server = "packages.viash-hub.com"
+  }
+}
+```
+
+Alternatively, a custom location for the SCM file can be specified using the `NXF_SCM_FILE` environment variable.
+
+You can check if everything is working by getting the `--help` for a workflow:
+```bash
+nextflow run \
+vsh/demultiplex \
+-r v0.3.9 \
+--help
+```
 
 ### Run from the CLI
 
