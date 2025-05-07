@@ -39,10 +39,12 @@ The full workflow can be run in two ways:
 
 ## Workflow Overview
 
-The workflow executes the following steps: 1. Unpacking the input data
-(when a TAR archive is provided) 2. Run `bclconvert` or `bases2fastq` 3.
-Run `falco` and convert Illumina InterOp information to csv 4. Run
-`multiqc` to generate a report
+The workflow executes the following steps:
+
+1.  Unpacking the input data (when a TAR archive is provided)
+2.  Run `bclconvert` or `bases2fastq`
+3.  Run `falco` and convert Illumina InterOp information to csv
+4.  Run `multiqc` to generate a report
 
 ## Example usage
 
