@@ -37,7 +37,7 @@ workflow test_illumina {
          assert it.isDirectory(): "Expected falco output to be a directory"
       }
       assert state.output_multiqc.isFile(): "Expected multiQC output to be a file"
-      fastq_files = state.output.listFiles().findAll { it.name.endsWith('.fastq.gz') }.collect { it.name }
+      fastq_files = state.output.listFiles().collect{it.name}
       assert ["Undetermined_S0_L001_R1_001.fastq.gz", "Sample23_S3_L001_R1_001.fastq.gz", 
         "sampletest_S4_L001_R1_001.fastq.gz", "Sample1_S1_L001_R1_001.fastq.gz", 
         "SampleA_S2_L001_R1_001.fastq.gz"].toSet() == fastq_files.toSet(): \
