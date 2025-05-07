@@ -75,10 +75,11 @@ directory. Demultiplexer can also be set explicitly using the
 ### Setup
 
 In order to use the workflows in this package, you’ll need to do the
-following: \* Install
-[nextflow](https://www.nextflow.io/docs/latest/install.html) \* Install
-a nextflow compatible executor. This workflow provides a profile for
-[docker](https://docs.docker.com/get-started/).
+following:
+
+- Install [nextflow](https://www.nextflow.io/docs/latest/install.html)
+- Install a nextflow compatible executor. This workflow provides a
+  profile for [docker](https://docs.docker.com/get-started/).
 
 ### Run from Viash Hub
 
@@ -89,7 +90,7 @@ a nextflow compatible executor. This workflow provides a profile for
 
 ![](assets/demultiplex-launch-small.png)
 
-1.  We will start an example run and set profile to `docker`.
+2.  We will start an example run and set profile to `docker`.
 
 ![](assets/demultiplex-launch-parameters-1.png)
 
@@ -186,8 +187,10 @@ nextflow run vsh/demultiplex \
 
 Nextflow’s labels can be used to specify the amount of resources a
 process can use. This workflow uses the following labels for CPU and
-memory: \* `verylowmem`, `lowmem`, `midmem`, `highmem` \* `verylowcpu`,
-`lowcpu`, `midcpu`, `highcpu`
+memory:
+
+- `verylowmem`, `lowmem`, `midmem`, `highmem`
+- `verylowcpu`, `lowcpu`, `midcpu`, `highcpu`
 
 The defaults for these labels can be found at
 `src/config/labels.config`. Nextflow checks that the specified resources

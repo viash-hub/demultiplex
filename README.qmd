@@ -61,6 +61,7 @@ presence of either `SampleSheet.csv` or `RunParameters.xml` in the input directo
 ### Setup
 
 In order to use the workflows in this package, you'll need to do the following:
+
 * Install [nextflow](https://www.nextflow.io/docs/latest/install.html)
 * Install a nextflow compatible executor. This workflow provides a profile for [docker](https://docs.docker.com/get-started/).
 
@@ -72,7 +73,7 @@ Press the ‘Launch’ button and follow the instructions.
 
 ![](assets/demultiplex-launch-small.png)
 
-1. We will start an example run and set profile to `docker`.
+2. We will start an example run and set profile to `docker`.
 
 ![](assets/demultiplex-launch-parameters-1.png)
 
@@ -161,6 +162,7 @@ nextflow run vsh/demultiplex \
 ### (Optional) Resource usage tuning
 
 Nextflow's labels can be used to specify the amount of resources a process can use. This workflow uses the following labels for CPU and memory:
+
 * `verylowmem`, `lowmem`, `midmem`, `highmem`
 * `verylowcpu`, `lowcpu`, `midcpu`, `highcpu`
 
