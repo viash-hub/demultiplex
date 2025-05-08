@@ -21,6 +21,9 @@ argument_groups:
         description: "Location where to write the run information to."
         type: file
         required: true
+      - name: "--input_demultiplexer_logs"
+        type: file
+        required: true
   - name: Output arguments
     arguments:
       - name: --output
@@ -39,6 +42,10 @@ argument_groups:
         type: file
         direction: output
         default: run_information.csv
+      - name: "--output_demultiplexer_logs"
+        type: file
+        direction: output
+        default: "demultiplexer_logs"
 
 resources:
   - type: bash_script

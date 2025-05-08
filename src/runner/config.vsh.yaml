@@ -49,6 +49,10 @@ argument_groups:
         type: file
         direction: output
         default: "qc/multiqc_report.html"
+      - name: "--demultiplexer_logs"
+        type: file
+        direction: output
+        default: "demultiplexer_logs"
   - name: "Other arguments"
     arguments:
       - name: --skip_copycomplete_check

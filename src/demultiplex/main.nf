@@ -124,14 +124,15 @@ workflow run_wf {
             bcl_input_directory: state.input,
             sample_sheet: state.run_information,
             output_directory: state.output,
-            reports: "reports",
-            logs: "logs"
+            reports: state.demultiplexer_logs,
+            logs: state.demultiplexer_logs,
           ]
         },
         toState: {id, result, state -> 
           def toAdd = [
             "output_demultiplexer" : result.output_directory,
             "run_id": id,
+            "demultiplexer_logs": result.reports,
           ]
           def newState = state + toAdd
           return newState
@@ -141,11 +142,15 @@ workflow run_wf {
       | bases2fastq.run(
         runIf: {id, state -> state.demultiplexer in ["bases2fastq"]},
         directives: [label: ["highmem", "midcpu"]],
-        fromState: [
-          "analysis_directory": "input",
-          "run_manifest": "run_information",
-          "output_directory": "output",
-        ],
+        fromState: { id, state ->
+          [
+            "analysis_directory": state.input,
+            "run_manifest": state.run_information,
+            "output_directory": state.output,
+            "report": state.demultiplexer_logs + "/report.html",
+            "logs": state.demultiplexer_logs,
+          ]
+        },
         args: [
           "no_projects": true, // Do not put output files in a subfolder for project
           //"split_lanes": true,
@@ -156,6 +161,8 @@ workflow run_wf {
           def toAdd = [
             "output_demultiplexer" : result.output_directory,
             "run_id": id,
+            "demultiplexer_logs": result.logs,
+
           ]
           def newState = state + toAdd
           return newState
@@ -225,6 +232,7 @@ workflow run_wf {
           state + [ "output_multiqc" : result.output_report ]
         }
       )
+
       | setState(
         [
           //"_meta": "_meta",
@@ -232,6 +240,7 @@ workflow run_wf {
           "output_falco": "output_falco",
           "output_multiqc": "output_multiqc",
           "output_run_information": "run_information",
+          "demultiplexer_logs": "demultiplexer_logs"
         ]
       )
 
