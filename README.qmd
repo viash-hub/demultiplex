@@ -129,7 +129,7 @@ You can check if everything is working by getting the `--help` for a workflow:
 ```bash
 nextflow run \
 vsh/demultiplex \
--r v0.3.9 \
+-r v0.3.11 \
 --help
 ```
 
@@ -141,7 +141,7 @@ using the following:
 
 ``` bash
  nextflow run vsh/demultiplex \
-  -revision v0.3.9 \
+  -revision v0.3.11 \
   -main-script target/nextflow/workflows/runner/main.nf \
   --help
 ```
@@ -150,7 +150,7 @@ Having this project available locally, you can run the following command:
 
 ```bash
 nextflow run vsh/demultiplex \
--r v0.3.9 \
+-r v0.3.11 \
 -main-script target/nextflow/runner/main.nf \
 --input "gs://viash-hub-resources/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2"  \
 --demultiplexer bclconvert \
