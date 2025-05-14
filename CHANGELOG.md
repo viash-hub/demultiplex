@@ -16,6 +16,8 @@
 
 * Bump viash to 0.9.4, which adds support for nextflow versions starting major version 25.01 (PR #43 and #44).
 
+* Output demultiplexer logs and metrics (PR #41).
+  
 # demultiplex v0.3.8
 
 ## Bug fixes
