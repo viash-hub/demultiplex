@@ -1,3 +1,9 @@
+# demultiplex v0.3.11
+
+# New features
+
+* Output demultiplexer logs and metrics (PR #41).
+
 # demultiplex v0.3.10
 
 ## Minor changes

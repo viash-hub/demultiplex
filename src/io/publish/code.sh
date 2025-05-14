@@ -5,6 +5,7 @@ set -eo pipefail
 declare -A input_output_mapping=(["par_input"]="par_output" 
                                  ["par_input_multiqc"]="par_output_multiqc"
                                  ["par_input_run_information"]="par_output_run_information"
+                                 ["par_input_demultiplexer_logs"]="par_output_demultiplexer_logs"
                                 )
 
 for input_argument_name in "${!input_output_mapping[@]}"

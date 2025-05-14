@@ -23,6 +23,14 @@ workflow test_illumina {
         assert output.size() == 2 : "outputs should contain two elements; [id, file]"
         "Output: $output"
       }
+
+  event_count_ch = output_ch
+    | toSortedList()
+    | map { state -> 
+      assert state.size() == 1 : "Expected one event in the output channel"
+    }
+
+  assert_ch = output_ch
     | map {id, state ->
       assert state.output.isDirectory(): "Expected bclconvert output to be a directory"
       state.output_falco.each{
@@ -57,6 +65,21 @@ workflow test_illumina {
                                    |1,sampletest,PatientSample,UDP0004,ATTCCATAAG,TGCCTGGTGG
                                    |""".stripMargin()
       assert state.output_run_information.text.replaceAll("\r\n", "\n") == expected_run_information
+
+      println "ID: ${id}"
+      println "State: ${state}"
+
+      assert state.demultiplexer_logs.isDirectory(): 
+        "Expected BCL Convert reports to be a directory"
+        
+      def logs_files = state.demultiplexer_logs.listFiles()
+      println "Logs files: ${logs_files}"
+      assert logs_files.size() > 0: "Expected BCL Convert logs dir to contain files"
+      
+      assert logs_files.find { it.name == "Demultiplex_Stats.csv" }: 
+        "Expected to find BCL Convert Demultiplex_Stats.csv"
+      assert logs_files.find { it.name == "Logs" }: 
+        "Expected to find BCL Convert Logs directory"
     }
 }
 
@@ -80,5 +103,14 @@ workflow test_bases2fastq {
       assert state.output.isDirectory(): "Expected bases2fastq output to be a directory"
       state.output_falco.each{assert it.isDirectory(): "Expected falco output to be a directory"}
       assert state.output_multiqc.isFile(): "Expected multiQC output to be a file"
+
+      def logs_files = state.demultiplexer_logs.listFiles()
+      println "Logs files: ${logs_files}"
+      assert logs_files.size() > 0: "Expected bases2fastq logs dir to contain files"
+
+      assert logs_files.find { it.name == "report.html" } != null: 
+        "Expected to find bases2fastq report.html"
+      assert logs_files.find { it.name == "info" }: 
+        "Expected to find bases2fastq info directory"
     }
 }

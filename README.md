@@ -153,7 +153,7 @@ workflow:
 ``` bash
 nextflow run \
 vsh/demultiplex \
--r v0.3.9 \
+-r v0.3.11 \
 --help
 ```
 
@@ -165,7 +165,7 @@ instance using the following:
 
 ``` bash
  nextflow run vsh/demultiplex \
-  -revision v0.3.9 \
+  -revision v0.3.11 \
   -main-script target/nextflow/workflows/runner/main.nf \
   --help
 ```
@@ -175,7 +175,7 @@ command:
 
 ``` bash
 nextflow run vsh/demultiplex \
--r v0.3.9 \
+-r v0.3.11 \
 -main-script target/nextflow/runner/main.nf \
 --input "gs://viash-hub-resources/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2"  \
 --demultiplexer bclconvert \
