@@ -1,0 +1,11 @@
+[foo],,,,
+[somecontent],,,,
+bar,lorem,,,
+,,,,
+# Comment
+
+[BCLConvert_Data],,,,
+Sample_ID,Index,Index2,,
+sample1,GTAGCCCTGT,GAGCATCTAT,,
+sample2,TCGGCTCTAC,CCGATGGTCT,,
+,,,,
