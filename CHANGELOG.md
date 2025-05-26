@@ -2,11 +2,11 @@
 
 ## New features
 
-* Add support for Nextflow versions version starting 25.xx.xx (PR #).
+* Add support for Nextflow versions version starting 25.xx.xx (PR #50).
 
 ## Bug fixes
 
-* Allow FASTQ files for `Undetermined` to be empty (PR #).  
+* Allow FASTQ files for `Undetermined` to be empty (PR #50).  
 
 # demultiplex v0.3.11
 
