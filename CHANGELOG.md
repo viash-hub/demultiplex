@@ -1,6 +1,16 @@
+# demultiplex v0.3.12
+
+## New features
+
+* Add support for Nextflow versions version starting 25.xx.xx (PR #).
+
+## Bug fixes
+
+* Allow FASTQ files for `Undetermined` to be empty (PR #).  
+
 # demultiplex v0.3.11
 
-# New features
+## New features
 
 * Output demultiplexer logs and metrics (PR #41).
 
