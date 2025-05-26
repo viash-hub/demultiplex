@@ -33,7 +33,8 @@ workflow run_wf {
         def sample_sheet = state.sample_sheet
         def start_parsing = false
         def sample_id_column_index = null
-        def samples = ["Undetermined"]
+        def undetermined_sample_name = "Undetermined"
+        def samples = [undetermined_sample_name]
         def original_id = id
 
         // Parse sample sheet for sample IDs
@@ -92,8 +93,9 @@ workflow run_wf {
         processed_samples = samples.collect { sample_id ->
           def forward_regex = ~/^${sample_id}_S(\d+)_(L(\d+)_)?R1_(\d+)\.fastq\.gz$/
           def reverse_regex = ~/^${sample_id}_S(\d+)_(L(\d+)_)?R2_(\d+)\.fastq\.gz$/
-          def forward_fastq = state.input.listFiles().findAll{it.isFile() && it.name ==~ forward_regex}
-          def reverse_fastq = state.input.listFiles().findAll{it.isFile() && it.name ==~ reverse_regex}
+          // Sort is needed here because multiple lanes (_L00*_) might be present and they need to be in the same order in both lists
+          def forward_fastq = state.input.listFiles().findAll{it.isFile() && it.name ==~ forward_regex}.sort()
+          def reverse_fastq = state.input.listFiles().findAll{it.isFile() && it.name ==~ reverse_regex}.sort()
           assert forward_fastq && !forward_fastq.isEmpty(): "No forward fastq files were found for sample ${sample_id}. " +
             "All fastq files in directory: ${allfastqs.collect{it.name}}"
           assert (reverse_fastq.isEmpty() || (forward_fastq.size() == reverse_fastq.size())): 
@@ -102,7 +104,7 @@ workflow run_wf {
           println "Found ${forward_fastq.size()} forward and ${reverse_fastq.size()} reverse " +
             "fastq files for sample ${sample_id}"
 
-          assert forward_fastq.every{!is_empty(it)} && reverse_fastq.every{!is_empty(it)}:
+          assert sample_id == undetermined_sample_name || (forward_fastq.every{!is_empty(it)} && reverse_fastq.every{!is_empty(it)}):
             "A fastq file for sample '${sample_id}' appears to be empty!"
           def fastqs_state = [
             "fastq_forward": forward_fastq,
