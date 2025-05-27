@@ -65,7 +65,7 @@ workflow run_wf {
             input_demultiplexer_logs: state.demultiplexer_logs,
             output: fastq_output_1,
             output_sample_qc: sample_qc_output_1,
-            multiqc_output: multiqc_output_1,
+            output_multiqc: multiqc_output_1,
             output_run_information: run_information_output_1,
             output_demultiplexer_logs: demultiplexer_logs_output,
           ]
