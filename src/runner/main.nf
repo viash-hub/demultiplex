@@ -27,7 +27,7 @@ workflow run_wf {
             "skip_copycomplete_check": state.skip_copycomplete_check,
             "output": "$id/fastq",
             "output_sample_qc": "$id/qc/fastqc",
-            "output_multiqc": "$id/qc/multiqc_report.html",
+            "multiqc_output": "$id/qc/multiqc_report.html",
             "demultiplexer_logs": "$id/demultiplexer_logs",
           ]
           if (state.run_information) {
@@ -60,12 +60,12 @@ workflow run_wf {
           [
             input: state.output,
             input_sample_qc: state.output_sample_qc,
-            input_multiqc: state.output_multiqc,
+            input_multiqc: state.multiqc_output,
             input_run_information: state.output_run_information,
             input_demultiplexer_logs: state.demultiplexer_logs,
             output: fastq_output_1,
             output_sample_qc: sample_qc_output_1,
-            output_multiqc: multiqc_output_1,
+            multiqc_output: multiqc_output_1,
             output_run_information: run_information_output_1,
             output_demultiplexer_logs: demultiplexer_logs_output,
           ]

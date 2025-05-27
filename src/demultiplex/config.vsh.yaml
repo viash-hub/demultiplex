@@ -43,8 +43,8 @@ argument_groups:
         required: false
         multiple: true
         default: "$id/qc/fastqc"
-      - name: "--output_multiqc"
-        description: Directory to write MultiQC output to
+      - name: "--multiqc_output"
+        description: Location where to write MultiQC output to
         type: file
         direction: output
         required: false

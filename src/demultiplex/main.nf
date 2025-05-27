@@ -219,7 +219,7 @@ workflow run_wf {
         fromState: {id, state ->
           def new_state = [
             "input": state.output_sample_qc,
-            "output_report": state.output_multiqc,
+            "output_report": state.multiqc_output,
             "cl_config": 'sp: {fastqc/data: {fn: "*_fastqc_data.txt"}}'
           ]
           if (state.demultiplexer == "bclconvert") {
@@ -231,7 +231,7 @@ workflow run_wf {
           return new_state
         },
         toState: { id, result, state ->
-          state + [ "output_multiqc" : result.output_report ]
+          state + [ "multiqc_output" : result.output_report ]
         }
       )
 
@@ -240,7 +240,7 @@ workflow run_wf {
           //"_meta": "_meta",
           "output": "output_demultiplexer",
           "output_sample_qc": "output_sample_qc",
-          "output_multiqc": "output_multiqc",
+          "multiqc_output": "multiqc_output",
           "output_run_information": "run_information",
           "demultiplexer_logs": "demultiplexer_logs"
         ]

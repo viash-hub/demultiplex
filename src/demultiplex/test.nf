@@ -36,7 +36,7 @@ workflow test_illumina {
       state.output_sample_qc.each{
          assert it.isDirectory(): "Expected sample QC output to be a directory"
       }
-      assert state.output_multiqc.isFile(): "Expected multiQC output to be a file"
+      assert state.multiqc_output.isFile(): "Expected multiQC output to be a file"
       fastq_files = state.output.listFiles().collect{it.name}
       assert ["Undetermined_S0_L001_R1_001.fastq.gz", "Sample23_S3_L001_R1_001.fastq.gz", 
         "sampletest_S4_L001_R1_001.fastq.gz", "Sample1_S1_L001_R1_001.fastq.gz", 
@@ -102,7 +102,7 @@ workflow test_bases2fastq {
     | map {id, state ->
       assert state.output.isDirectory(): "Expected bases2fastq output to be a directory"
       state.output_sample_qc.each{assert it.isDirectory(): "Expected sample QC output to be a directory"}
-      assert state.output_multiqc.isFile(): "Expected multiQC output to be a file"
+      assert state.multiqc_output.isFile(): "Expected multiQC output to be a file"
 
       def logs_files = state.demultiplexer_logs.listFiles()
       println "Logs files: ${logs_files}"
@@ -148,7 +148,7 @@ workflow test_no_index {
       state.output_sample_qc.each{
          assert it.isDirectory(): "Expected sample QC output to be a directory"
       }
-      assert state.output_multiqc.isFile(): "Expected multiQC output to be a file"
+      assert state.multiqc_output.isFile(): "Expected multiQC output to be a file"
       fastq_files = state.output.listFiles().collect{it.name}
       assert ["Undetermined_S0_R2_001.fastq.gz", "Undetermined_S0_R1_001.fastq.gz", 
               "SingleCell-RNA-P3-2-SI-TT-A5_S1_R1_001.fastq.gz", "SingleCell-RNA-P3-2-SI-TT-A5_S1_R2_001.fastq.gz"
