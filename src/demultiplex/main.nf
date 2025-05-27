@@ -182,6 +182,33 @@ workflow run_wf {
     output_ch = samples_ch 
       | falco.run(
         directives: [label: ["verylowcpu", "lowmem"]],
+        filter: {id, state ->
+          // This filter checks for the edge-case where no indices are used.
+          // It is mosly used in case of Illumina data: the bcl files are converted to FASTQ
+          // The 'Undetermined' files are all empty.
+          // This check is needed because Falco fails to run on empty FASTQ files.
+          if (id != "Undetermined") {
+            // Always run falco when not "Undetermined"
+            return true
+          }
+          // When "Undetermined" only run if any FASTQ contains reads.
+          def all_undetermined_fastq = state.fastq_forward + state.fastq_reverse
+          def fastq_contains_content = all_undetermined_fastq.collect{
+            return !it.splitFastq(limit: 1).isEmpty()
+          }
+          if (fastq_contains_content.every{}) {
+            // All FASTQs contain content
+            println "Undetermined FASTQ files (${all_undetermined_fastq}) all contain reads"
+            return true
+          } else if (fastq_contains_content.any{}) {
+            // Only some contain content
+            error "One of the files from ${all_undetermined_fastq} appears to be empty"
+          } else {
+            // All are empty
+            println "All Undetermined FASTQ files are empty."
+            return false
+          }
+        },
         fromState: {id, state ->
           [
             "input": [state.fastq_forward, state.fastq_reverse],
