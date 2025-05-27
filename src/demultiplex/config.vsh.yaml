@@ -36,15 +36,15 @@ argument_groups:
         direction: output
         required: false
         default: "$id/fastq"
-      - name: "--output_falco"
-        description: Directory to write falco output to
+      - name: "--output_sample_qc"
+        description: Directory to write FastQC output to
         type: file
         direction: output
         required: false
         multiple: true
         default: "$id/qc/fastqc"
       - name: "--output_multiqc"
-        description: Directory to write falco output to
+        description: Directory to write MultiQC output to
         type: file
         direction: output
         required: false
@@ -79,6 +79,9 @@ test_resources:
   - type: nextflow_script
     path: test.nf
     entrypoint: test_bases2fastq
+  - type: nextflow_script
+    path: test.nf
+    entrypoint: test_no_index
 
 dependencies:
   - name: io/untar
@@ -93,7 +96,7 @@ dependencies:
     repository: bb
   - name: bases2fastq
     repository: bb
-  - name: falco
+  - name: fastqc
     repository: bb
   - name: multiqc
     repository: bb

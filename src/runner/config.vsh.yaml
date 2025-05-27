@@ -41,7 +41,7 @@ argument_groups:
         type: file
         direction: output
         default: "fastq"
-      - name: --falco_output
+      - name: --sample_qc_output
         type: file
         direction: output
         default: "qc/fastqc"
@@ -64,6 +64,10 @@ resources:
   - type: nextflow_script
     path: main.nf
     entrypoint: run_wf
+test_resources:
+  - type: nextflow_script
+    path: test.nf
+    entrypoint: test
 
 dependencies:
   - name: demultiplex

@@ -25,10 +25,10 @@ do
     ls "$output_location"
 done
 
-echo "Grouping output from $par_input_falco into $par_output_falco"
-mkdir -p "$par_output_falco"
-IFS=";" read -ra falco_inputs <<< $par_input_falco
-for falco_dir in "${falco_inputs[@]}"; do
-    echo "Copying contents of $falco_dir"
-    find -H -D exec "$falco_dir" -type f -maxdepth 1 -exec cp -t "$par_output_falco" {} +
+echo "Grouping output from $par_input_sample_qc into $par_output_sample_qc"
+mkdir -p "$par_output_sample_qc"
+IFS=";" read -ra sample_qc_inputs <<< $par_input_sample_qc
+for qc_dir in "${sample_qc_inputs[@]}"; do
+    echo "Copying contents of $qc_dir"
+    find -H -D exec "$qc_dir" -type f -maxdepth 1 -exec cp -t "$par_output_sample_qc" {} +
 done

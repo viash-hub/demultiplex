@@ -22,3 +22,10 @@ nextflow run . \
   -entry test_bases2fastq \
   -c src/config/labels.config \
   -resume
+
+ nextflow run . \
+  -main-script src/demultiplex/test.nf \
+  -profile docker,no_publish,local \
+  -entry test_no_index \
+  -c src/config/labels.config \
+  -resume
