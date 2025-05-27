@@ -158,7 +158,7 @@ workflow test_no_index {
         assert it.length() != 0: "Expected FASTQ file to not be empty"
       }
       assert state.output_run_information.isFile(): "Expected output run information to be a file"
-      expected_run_information = """[Header]
+      expected_run_information = """[Header],,,,
                                    |FileFormatVersion,2,,,
                                    |RunName,SingleCell-RNA_P3_2,,,
                                    |InstrumentPlatform,NextSeq1k2k,,,
@@ -180,8 +180,7 @@ workflow test_no_index {
                                    |[BCLConvert_Data],,,,
                                    |Sample_ID,Index,Index2,,
                                    |SingleCell-RNA-P3-2-SI-TT-A5,,,,
-                                   |,,,,
-                                   |""".stripMargin()
+                                   |,,,,""".stripMargin()
       assert state.output_run_information.text.replaceAll("\r\n", "\n") == expected_run_information
 
       println "ID: ${id}"
