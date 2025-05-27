@@ -97,6 +97,8 @@ dependencies:
     repository: bb
   - name: multiqc
     repository: bb
+  - name: detect_demultiplexer
+    repository: local
 repositories:
   - name: bb
     type: vsh
