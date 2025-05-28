@@ -9,6 +9,17 @@ workflow run_wf {
 
   main:
     output_ch = input_ch
+      | map { id, state -> 
+        // The argument names for this workflow and the demultiplex workflow may overlap
+        // here, we store a copy in order to make sure to not accidentally overwrite the state.
+        def new_state = state + [
+          "fastq_output_workflow": state.fastq_output,
+          "multiqc_output_workflow": state.multiqc_output,
+          "sample_qc_output_workflow": state.sample_qc_output,
+          "demultiplexer_logs_workflow": state.demultiplexer_logs,
+        ]
+        return [id, new_state]
+      }
       // Extract the ID from the input.
       // If the input is a tarball, strip the suffix.
       | map{ id, state ->
@@ -45,17 +56,16 @@ workflow run_wf {
           def id1 = (state.plain_output) ? id : "${state.run_id}/${date}"
           def id2 = (state.plain_output) ? id : "${id1}_demultiplex_${version}"
 
-          def fastq_output_1 = (id2 == "run") ? state.fastq_output : "${id2}/" + state.fastq_output
-          def sample_qc_output_1 = (id2 == "run") ? state.sample_qc_output : "${id2}/" + state.sample_qc_output
-          def multiqc_output_1 = (id2 == "run") ? state.multiqc_output : "${id2}/" + state.multiqc_output
-          def run_information_output_1 = (id2 == "run") ? "${state.output_run_information.getName()}" : "${id2}/${state.output_run_information.getName()}"
-          def demultiplexer_logs_output = (id2 == "run") ? state.demultiplexer_logs : "${id2}/${state.demultiplexer_logs.getName()}"
+          def prefix = (id2 == "run") ? "${id2}/" : ""
+          // These output names are determined by arguments.
+          def fastq_output_1 = "${prefix}${state.fastq_output_workflow}"
+          def sample_qc_output_1 = "${prefix}${state.sample_qc_output_workflow}"
+          def multiqc_output_1 = "${prefix}${state.multiqc_output_workflow}"
+          def demultiplexer_logs_output = "${prefix}${state.demultiplexer_logs_workflow}"
+          // The name of the output file for the run information is determined by the input file name.
+          def run_information_output_1 = "${prefix}${state.output_run_information.getName()}"
 
-          if (id2 == "run") {
-            println("Publising to ${params.publish_dir}")
-          } else {
-            println("Publising to ${params.publish_dir}/${id2}")
-          }
+          println("Publising to ${params.publish_dir}/${prefix}")
 
           [
             input: state.output,
