@@ -180,19 +180,21 @@ workflow run_wf {
       )
 
     output_ch = samples_ch 
-      | falco.run(
+      | fastqc.run(
         directives: [label: ["verylowcpu", "lowmem"]],
         fromState: {id, state ->
+          def output_base = "$id/qc/fastqc/*"
           [
             "input": [state.fastq_forward, state.fastq_reverse],
-            "outdir": "$id/qc/falco",
-            "summary_filename": null,
-            "report_filename": null,
-            "data_filename": null,
+            "html": "${output_base}_fastqc_report.html",
+            "summary": "${output_base}_summary.txt",
+            "data": "${output_base}_fastqc_data.txt",
           ]
         },
         toState: { id, result, state ->
-          state + [ "output_falco" : result.outdir ]
+          // The output directory for all files above is the same:
+          // take the directory from one of the files
+          state + [ "output_sample_qc": result.html[0].parent ]
         }
       )
 
@@ -202,13 +204,13 @@ workflow run_wf {
             "id": state.run_id,
             "forward_input": state.fastq_forward,
             "reverse_input": state.fastq_reverse, 
-            "falco_dir": state.output_falco,
+            "sample_qc_dir": state.output_sample_qc,
           ]
         },
         toState: [
           "forward_fastqs": "output_forward",
           "reverse_fastqs": "output_reverse",
-          "output_falco": "output_falco",
+          "output_sample_qc": "output_sample_qc",
         ]
       )
 
@@ -216,8 +218,8 @@ workflow run_wf {
         directives: [label: ["midcpu", "midmem"]],
         fromState: {id, state ->
           def new_state = [
-            "input": state.output_falco,
-            "output_report": state.output_multiqc,
+            "input": state.output_sample_qc,
+            "output_report": state.multiqc_output,
             "cl_config": 'sp: {fastqc/data: {fn: "*_fastqc_data.txt"}}'
           ]
           if (state.demultiplexer == "bclconvert") {
@@ -229,7 +231,7 @@ workflow run_wf {
           return new_state
         },
         toState: { id, result, state ->
-          state + [ "output_multiqc" : result.output_report ]
+          state + [ "multiqc_output" : result.output_report ]
         }
       )
 
@@ -237,8 +239,8 @@ workflow run_wf {
         [
           //"_meta": "_meta",
           "output": "output_demultiplexer",
-          "output_falco": "output_falco",
-          "output_multiqc": "output_multiqc",
+          "output_sample_qc": "output_sample_qc",
+          "multiqc_output": "multiqc_output",
           "output_run_information": "run_information",
           "demultiplexer_logs": "demultiplexer_logs"
         ]

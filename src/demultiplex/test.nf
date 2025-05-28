@@ -33,10 +33,10 @@ workflow test_illumina {
   assert_ch = output_ch
     | map {id, state ->
       assert state.output.isDirectory(): "Expected bclconvert output to be a directory"
-      state.output_falco.each{
-         assert it.isDirectory(): "Expected falco output to be a directory"
+      state.output_sample_qc.each{
+         assert it.isDirectory(): "Expected sample QC output to be a directory"
       }
-      assert state.output_multiqc.isFile(): "Expected multiQC output to be a file"
+      assert state.multiqc_output.isFile(): "Expected multiQC output to be a file"
       fastq_files = state.output.listFiles().collect{it.name}
       assert ["Undetermined_S0_L001_R1_001.fastq.gz", "Sample23_S3_L001_R1_001.fastq.gz", 
         "sampletest_S4_L001_R1_001.fastq.gz", "Sample1_S1_L001_R1_001.fastq.gz", 
@@ -101,8 +101,8 @@ workflow test_bases2fastq {
       }
     | map {id, state ->
       assert state.output.isDirectory(): "Expected bases2fastq output to be a directory"
-      state.output_falco.each{assert it.isDirectory(): "Expected falco output to be a directory"}
-      assert state.output_multiqc.isFile(): "Expected multiQC output to be a file"
+      state.output_sample_qc.each{assert it.isDirectory(): "Expected sample QC output to be a directory"}
+      assert state.multiqc_output.isFile(): "Expected multiQC output to be a file"
 
       def logs_files = state.demultiplexer_logs.listFiles()
       println "Logs files: ${logs_files}"
@@ -112,5 +112,90 @@ workflow test_bases2fastq {
         "Expected to find bases2fastq report.html"
       assert logs_files.find { it.name == "info" }: 
         "Expected to find bases2fastq info directory"
+    }
+}
+
+
+workflow test_no_index {
+  // Test what happens when no index is specified. All the reads go into one sample
+  // and the "Undetermined" should be empty
+  output_ch = Channel.fromList([
+        [
+          input: params.resources_test + "demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2",
+          demultiplexer: "bclconvert",
+          run_information: params.resources_test + "demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2/SampleSheetNoIndex.csv" 
+        ]
+      ])
+    | map { state -> [ "run", state ] }
+    | demultiplex.run(
+        toState: { id, output, state ->
+          output + [ orig_input: state.input ] }
+      )
+    | view { output ->
+        assert output.size() == 2 : "outputs should contain two elements; [id, file]"
+        "Output: $output"
+      }
+
+  event_count_ch = output_ch
+    | toSortedList()
+    | map { state -> 
+      assert state.size() == 1 : "Expected one event in the output channel"
+    }
+
+  assert_ch = output_ch
+    | map {id, state ->
+      assert state.output.isDirectory(): "Expected bclconvert output to be a directory"
+      state.output_sample_qc.each{
+         assert it.isDirectory(): "Expected sample QC output to be a directory"
+      }
+      assert state.multiqc_output.isFile(): "Expected multiQC output to be a file"
+      fastq_files = state.output.listFiles().collect{it.name}
+      assert ["Undetermined_S0_R2_001.fastq.gz", "Undetermined_S0_R1_001.fastq.gz", 
+              "SingleCell-RNA-P3-2-SI-TT-A5_S1_R1_001.fastq.gz", "SingleCell-RNA-P3-2-SI-TT-A5_S1_R2_001.fastq.gz"
+             ].toSet() == fastq_files.toSet(): \
+        "Output directory should contain the expected FASTQ files"
+      fastq_files.each{
+        assert it.length() != 0: "Expected FASTQ file to not be empty"
+      }
+      assert state.output_run_information.isFile(): "Expected output run information to be a file"
+      expected_run_information = """[Header],,,,
+                                   |FileFormatVersion,2,,,
+                                   |RunName,SingleCell-RNA_P3_2,,,
+                                   |InstrumentPlatform,NextSeq1k2k,,,
+                                   |IndexOrientation,Forward,,,
+                                   |,,,,
+                                   |[Reads],,,,
+                                   |Read1Cycles,28,,,
+                                   |Read2Cycles,90,,,
+                                   |Index1Cycles,10,,,
+                                   |Index2Cycles,10,,,
+                                   |,,,,
+                                   |[BCLConvert_Settings],,,,
+                                   |SoftwareVersion,4.2.7,,,
+                                   |TrimUMI,0,,,
+                                   |OverrideCycles,U28;N10;N10;Y90,,,
+                                   |FastqCompressionFormat,gzip,,,
+                                   |NoLaneSplitting,TRUE,,,
+                                   |,,,,
+                                   |[BCLConvert_Data],,,,
+                                   |Sample_ID,Index,Index2,,
+                                   |SingleCell-RNA-P3-2-SI-TT-A5,,,,
+                                   |,,,,""".stripMargin()
+      assert state.output_run_information.text.replaceAll("\r\n", "\n") == expected_run_information
+
+      println "ID: ${id}"
+      println "State: ${state}"
+
+      assert state.demultiplexer_logs.isDirectory(): 
+        "Expected BCL Convert reports to be a directory"
+        
+      def logs_files = state.demultiplexer_logs.listFiles()
+      println "Logs files: ${logs_files}"
+      assert logs_files.size() > 0: "Expected BCL Convert logs dir to contain files"
+      
+      assert logs_files.find { it.name == "Demultiplex_Stats.csv" }: 
+        "Expected to find BCL Convert Demultiplex_Stats.csv"
+      assert logs_files.find { it.name == "Logs" }: 
+        "Expected to find BCL Convert Logs directory"
     }
 }

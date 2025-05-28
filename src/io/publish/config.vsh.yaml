@@ -8,8 +8,8 @@ argument_groups:
         description: Directory to write fastq data to
         type: file
         required: true
-      - name: "--input_falco"
-        description: Directory to write falco output to
+      - name: "--input_sample_qc"
+        description: Directory to write sample QC output to
         type: file
         required: true
         multiple: true
@@ -30,7 +30,7 @@ argument_groups:
         type: file
         direction: output
         default: "fastq"
-      - name: --output_falco
+      - name: --output_sample_qc
         type: file
         direction: output
         default: "qc/fastqc"

@@ -1,3 +1,15 @@
+# demultiplex v0.4.0
+
+## Breaking changes
+
+* Falco has been replaced with FastQC. Falco generates FastQC compatible output, but fails to run on empty FASTQ files (PR #51).
+  - `runner` workflow: `falco_output` has been renamed to `output_sample_qc`.
+  - `demultiplex` workflow: `output_falco` has been renamed to `output_sample_qc`.
+  - The output file names from the sample QC no longer contains the input file extensions. Instead, the sample name is used.
+  (for example `sample1_S1_R2_001.fastq.gz_fastqc_report.html` becomes `sample1_S1_R2_001_fastqc_report.html`)
+
+* `demultiplex` workflow: `output_multiqc` argument has been renamed to `multiqc_output` in order to align inner workflow and runner (PR #51).
+
 # demultiplex v0.3.12
 
 ## New features
