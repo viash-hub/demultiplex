@@ -5,17 +5,17 @@ import nextflow.exception.WorkflowScriptErrorException
 def tempDir = Files.createTempDirectory("demultiplex_runner_integration_test")
 println "Created temp directory: $tempDir"
 // Register shutdown hook to delete it on JVM exit
-// Runtime.runtime.addShutdownHook(new Thread({
-//     try {
-//         // Delete directory recursively
-//         Files.walk(tempDir)
-//             .sorted(Comparator.reverseOrder())
-//             .forEach { Files.delete(it) }
-//         println "Deleted temp directory: $tempDir"
-//     } catch (Exception e) {
-//         println "Failed to delete temp directory: $e"
-//     }
-// }))
+Runtime.runtime.addShutdownHook(new Thread({
+    try {
+        // Delete directory recursively
+        Files.walk(tempDir)
+            .sorted(Comparator.reverseOrder())
+            .forEach { Files.delete(it) }
+        println "Deleted temp directory: $tempDir"
+    } catch (Exception e) {
+        println "Failed to delete temp directory: $e"
+    }
+}))
 
 // The module inherits the parameters defined before the include statement, 
 // therefore any parameters set afterwards will not be used by the module.
