@@ -1,4 +1,5 @@
 name: demultiplex
+version: v0.4.0
 description: |
   Demultiplexing pipeline
 license: MIT
