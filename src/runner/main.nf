@@ -56,7 +56,7 @@ workflow run_wf {
           def id1 = (state.plain_output) ? id : "${state.run_id}/${date}"
           def id2 = (state.plain_output) ? id : "${id1}_demultiplex_${version}"
 
-          def prefix = (id2 == "run") ? "${id2}/" : ""
+          def prefix = (id2 == "run") ? "" : "${id2}/"
           // These output names are determined by arguments.
           def fastq_output_1 = "${prefix}${state.fastq_output_workflow}"
           def sample_qc_output_1 = "${prefix}${state.sample_qc_output_workflow}"

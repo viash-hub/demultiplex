@@ -5,17 +5,17 @@ import nextflow.exception.WorkflowScriptErrorException
 def tempDir = Files.createTempDirectory("demultiplex_runner_integration_test")
 println "Created temp directory: $tempDir"
 // Register shutdown hook to delete it on JVM exit
-Runtime.runtime.addShutdownHook(new Thread({
-    try {
-        // Delete directory recursively
-        Files.walk(tempDir)
-            .sorted(Comparator.reverseOrder())
-            .forEach { Files.delete(it) }
-        println "Deleted temp directory: $tempDir"
-    } catch (Exception e) {
-        println "Failed to delete temp directory: $e"
-    }
-}))
+// Runtime.runtime.addShutdownHook(new Thread({
+//     try {
+//         // Delete directory recursively
+//         Files.walk(tempDir)
+//             .sorted(Comparator.reverseOrder())
+//             .forEach { Files.delete(it) }
+//         println "Deleted temp directory: $tempDir"
+//     } catch (Exception e) {
+//         println "Failed to delete temp directory: $e"
+//     }
+// }))
 
 // The module inherits the parameters defined before the include statement, 
 // therefore any parameters set afterwards will not be used by the module.
@@ -40,8 +40,10 @@ workflow test {
             // Nexflow only allows exceptions generated using the 'error' function (which throws WorkflowScriptErrorException).
             // So in order for the assert statement to work (or allow other errors to let the tests to fail)
             // We need to wrap these in WorkflowScriptErrorException. See https://github.com/nextflow-io/nextflow/pull/4458/files
-            // The error message will show up in
-            def all_files = file("${tempDir}/200624_A00834_0183_BHMTFYDRXX").listFiles()
+            // The error message will show up in .nextflow.log
+            def publish_subdir = file("${tempDir}/200624_A00834_0183_BHMTFYDRXX")
+            assert publish_subdir.isDirectory() 
+            def all_files = publish_subdir.listFiles()
             assert all_files.size() == 1
             def publish_dir = file(all_files[0])
             assert publish_dir.name.endsWith("_demultiplex_unknown_version")
@@ -68,7 +70,7 @@ workflow test {
             ].toSet()
             assert publish_dir.resolve("qc/multiqc_report.html").exists()
             def fastq_files = publish_dir.resolve("fastq").listFiles()
-            fastq_files.collect{it.name}.toSet() == [
+            assert fastq_files.collect{it.name}.toSet() == [
                 "Sample1_S1_L001_R1_001.fastq.gz",
                 "Sample23_S3_L001_R1_001.fastq.gz",
                 "SampleA_S2_L001_R1_001.fastq.gz",
