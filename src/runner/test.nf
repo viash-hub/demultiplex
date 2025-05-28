@@ -1,26 +1,31 @@
 import java.nio.file.Files
 import nextflow.exception.WorkflowScriptErrorException
 
-// Create temporary directory
-def tempDir = Files.createTempDirectory("demultiplex_runner_integration_test")
-println "Created temp directory: $tempDir"
-// Register shutdown hook to delete it on JVM exit
-Runtime.runtime.addShutdownHook(new Thread({
-    try {
-        // Delete directory recursively
-        Files.walk(tempDir)
-            .sorted(Comparator.reverseOrder())
-            .forEach { Files.delete(it) }
-        println "Deleted temp directory: $tempDir"
-    } catch (Exception e) {
-        println "Failed to delete temp directory: $e"
-    }
-}))
+// Create temporary directory for the publish_dir if it is not defined
+if (!params.publish_dir && params.publishDir) {
+    params.publish_dir = params.publishDir
+}
 
+if (!params.publish_dir) {
+    def tempDir = Files.createTempDirectory("demultiplex_runner_integration_test")
+    println "Created temp directory: $tempDir"
+    // Register shutdown hook to delete it on JVM exit
+    Runtime.runtime.addShutdownHook(new Thread({
+        try {
+            // Delete directory recursively
+            Files.walk(tempDir)
+                .sorted(Comparator.reverseOrder())
+                .forEach { Files.delete(it) }
+            println "Deleted temp directory: $tempDir"
+        } catch (Exception e) {
+            println "Failed to delete temp directory: $e"
+        }
+    }))
+    params.publish_dir = tempDir
+}
 // The module inherits the parameters defined before the include statement, 
 // therefore any parameters set afterwards will not be used by the module.
 
-params.publish_dir = tempDir
 include { runner } from params.rootDir + "/target/nextflow/runner/main.nf"
 params.resources_test = params.rootDir + "/testData/"
 
@@ -41,7 +46,7 @@ workflow test {
             // So in order for the assert statement to work (or allow other errors to let the tests to fail)
             // We need to wrap these in WorkflowScriptErrorException. See https://github.com/nextflow-io/nextflow/pull/4458/files
             // The error message will show up in .nextflow.log
-            def publish_subdir = file("${tempDir}/200624_A00834_0183_BHMTFYDRXX")
+            def publish_subdir = file("${params.publish_dir}/200624_A00834_0183_BHMTFYDRXX")
             assert publish_subdir.isDirectory() 
             def all_files = publish_subdir.listFiles()
             assert all_files.size() == 1
