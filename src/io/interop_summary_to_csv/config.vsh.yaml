@@ -25,7 +25,7 @@ resources:
 test_resources:
   - type: bash_script
     path: test.sh
-  - path: testData/iseq-DI
+  - path: /testData/iseq-DI
 engines:
   - type: docker
     image: debian:stable-slim
