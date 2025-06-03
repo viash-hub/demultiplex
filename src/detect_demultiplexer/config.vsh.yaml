@@ -1,7 +1,7 @@
 name: detect_demultiplexer
 description: |
-  Detects the demultiplexer used to generate the fastq files and runs the appropriate
-  demultiplexing workflow.
+  Detects the demultiplexer and accompanying sample information file which can be 
+  used to generate the fastq files.
 arguments:
   - name: --id
     description: Unique identifier for the run
@@ -30,12 +30,17 @@ arguments:
       required.
 
   - name: --demultiplexer_output
-    description: Output demultiplexer
+    description: |
+      Demultiplexer program. The demultiplexer is either provided (with --demultiplexer), 
+      or inferred from the contents of the input data.
     type: string
     direction: output
     required: false
   - name: --run_information_output
-    description: Output run information
+    description: |
+      Sample information that can be used to demultiplex the input data. 
+      An appropriate file was either provided (with --run_information), or 
+      inferred from the contents of the input data.
     type: file
     direction: output
     required: false
