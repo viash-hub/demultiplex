@@ -1,3 +1,10 @@
+# demultiplex v0.4.1
+
+## Minor changes
+
+* Split of part of the workflow logic (`detect_demultiplexer`) from the main workflow to a dedicated subworkflow (PR #52).
+* Add the package config (`_viash.yaml`) to every component's target dir. This makes introspection from, e.g. a `runner` workflow much more robust (PR #53).
+
 # demultiplex v0.4.0
 
 ## Breaking changes
