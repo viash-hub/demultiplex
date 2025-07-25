@@ -1,0 +1,57 @@
+name: detect_demultiplexer
+description: |
+  Detects the demultiplexer and accompanying sample information file which can be 
+  used to generate the fastq files.
+arguments:
+  - name: --id
+    description: Unique identifier for the run
+    type: string
+  - name: --input
+    description: Directory containing raw sequencing data
+    type: file
+    required: true
+  - name: --run_information
+    description: |
+      CSV file containing sample information, which will be used as 
+      input for the demultiplexer. Canonically called 'SampleSheet.csv' (Illumina)
+      or 'RunManifest.csv' (Element Biosciences). If not specified,
+      will try to autodetect the sample sheet in the input directory.
+      Requires --demultiplexer to be set.
+    type: file
+    required: false
+  - name: "--demultiplexer"
+    type: string
+    required: false
+    choices: ["bases2fastq", "bclconvert"]
+    description: |
+      Demultiplexer to use, choice depends on the provider
+      of the instrument that was used to generate the data.
+      When not using --sample_sheet, specifying this argument is not
+      required.
+
+  - name: --demultiplexer_output
+    description: |
+      Demultiplexer program. The demultiplexer is either provided (with --demultiplexer), 
+      or inferred from the contents of the input data.
+    type: string
+    direction: output
+    required: false
+  - name: --run_information_output
+    description: |
+      Sample information that can be used to demultiplex the input data. 
+      An appropriate file was either provided (with --run_information), or 
+      inferred from the contents of the input data.
+    type: file
+    direction: output
+    required: false
+
+resources:
+  - type: nextflow_script
+    path: main.nf
+    entrypoint: run_wf
+
+runners:
+  - type: nextflow
+
+engines:
+  - type: native
