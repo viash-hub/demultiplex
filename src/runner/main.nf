@@ -47,7 +47,8 @@ workflow run_wf {
           state_to_pass
         },
         toState: { id, result, state ->
-          state + result
+          // Duplicate the results under its own key, makes it easier to access later.
+          state + result + [ to_return: result ]
         },
       )
       | publish.run(
@@ -80,7 +81,7 @@ workflow run_wf {
             output_demultiplexer_logs: demultiplexer_logs_output,
           ]
         },
-        toState: { id, result, state -> [:] },
+        toState: { id, result, state -> [ fastq_output: state.to_return.output ] },
         directives: [
           publishDir: [
             path: "${params.publish_dir}", 
@@ -103,6 +104,6 @@ def get_version(input) {
   def yamlSlurper = new groovy.yaml.YamlSlurper()
   def loaded_viash_config = yamlSlurper.parse(inputFile)
   def version = (loaded_viash_config.version) ? loaded_viash_config.version : "unknown_version"
-  println("Version to be used: ${version}")
+  println("Version of demultiplex to be used: ${version}")
   return version
 }

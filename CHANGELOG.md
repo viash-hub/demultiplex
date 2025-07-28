@@ -1,3 +1,10 @@
+# demultiplex v0.4.2
+
+## Minor changes
+
+* Provide output from `runner` workflow so it can be used as part of a larger workflow (PR #56).
+* Add workflow identifier to version information during pipeline run (PR #56).
+
 # demultiplex v0.4.1
 
 ## Minor changes
