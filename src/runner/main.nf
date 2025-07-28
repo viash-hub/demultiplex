@@ -104,6 +104,6 @@ def get_version(input) {
   def yamlSlurper = new groovy.yaml.YamlSlurper()
   def loaded_viash_config = yamlSlurper.parse(inputFile)
   def version = (loaded_viash_config.version) ? loaded_viash_config.version : "unknown_version"
-  println("Version to be used: ${version}")
+  println("Version of demultiplex to be used: ${version}")
   return version
 }
