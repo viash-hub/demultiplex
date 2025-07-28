@@ -47,8 +47,8 @@ workflow run_wf {
           state_to_pass
         },
         toState: { id, result, state ->
-          // Store the results under its own key, makes it easier to access later.
-          state + result + [ to_return: results ]
+          // Duplicate the results under its own key, makes it easier to access later.
+          state + result + [ to_return: result ]
         },
       )
       | publish.run(
