@@ -81,7 +81,7 @@ workflow run_wf {
             output_demultiplexer_logs: demultiplexer_logs_output,
           ]
         },
-        toState: { id, result, state -> state.to_return },
+        toState: { id, result, state -> [ fastq_output: state.to_return.output ] },
         directives: [
           publishDir: [
             path: "${params.publish_dir}", 
