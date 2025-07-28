@@ -47,7 +47,8 @@ workflow run_wf {
           state_to_pass
         },
         toState: { id, result, state ->
-          state + result
+          // Store the results under its own key, makes it easier to access later.
+          state + result + [ to_return: results ]
         },
       )
       | publish.run(
@@ -80,7 +81,7 @@ workflow run_wf {
             output_demultiplexer_logs: demultiplexer_logs_output,
           ]
         },
-        toState: { id, result, state -> [:] },
+        toState: { id, result, state -> state.to_return },
         directives: [
           publishDir: [
             path: "${params.publish_dir}", 
