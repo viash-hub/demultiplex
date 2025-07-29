@@ -1,3 +1,9 @@
+# demultiplex v0.4.3
+
+## Minor changes
+
+* The `runner` creates a `transfer_completed.txt` file when the publishing of the output has finished (PR #57).
+
 # demultiplex v0.4.2
 
 ## Minor changes
