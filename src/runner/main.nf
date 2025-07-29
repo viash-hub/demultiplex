@@ -68,6 +68,15 @@ workflow run_wf {
 
           println("Publising to ${params.publish_dir}/${prefix}")
 
+          // Create a file to indicate that the publishing (transfer) of files has been completed.
+          // Multiple items can be added to onCompleteActions; which is required when processing multiple sequencing runs at a time.
+          // Alternatively setOnComplete could be used to add actions, but that only adds them at the end of the list (which is executed in order).
+          // The 'completed.txt' file must be created before the onComplete of the integration tests are run, so we need to prepend to the list.
+          workflow.onCompleteActions.add(0, {
+            def complete_file = file("${params.publish_dir}/${prefix}/transfer_completed.txt")
+            complete_file.text = "" // This will create a file when it does not exist.
+          })
+
           [
             input: state.output,
             input_sample_qc: state.output_sample_qc,
