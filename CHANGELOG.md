@@ -2,7 +2,7 @@
 
 ## Bug fixes
 
-* Only add the `transfer_complete.txt` files when the exitcode for the workflow is 0 (PR #)
+* Only add the `transfer_complete.txt` files when the exitcode for the workflow is 0 (PR #58)
 
 # demultiplex v0.4.3
 
