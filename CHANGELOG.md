@@ -1,3 +1,9 @@
+# demultiplex v0.4.4
+
+## Bug fixes
+
+* Only add the `transfer_complete.txt` files when the exitcode for the workflow is 0 (PR #)
+
 # demultiplex v0.4.3
 
 ## Minor changes
