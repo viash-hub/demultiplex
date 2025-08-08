@@ -76,7 +76,6 @@ workflow run_wf {
           def run_information_output_1 = "${prefix}${state.output_run_information.getName()}"
 
           println("Publising to ${params.publish_dir}/${prefix}")
-
           [
             input: state.output,
             input_sample_qc: state.output_sample_qc,
