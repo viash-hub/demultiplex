@@ -1,7 +1,13 @@
-def date = new Date().format('yyyyMMdd_hhmmss')
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.atomic.AtomicBoolean
 
+def date = new Date().format('yyyyMMdd_hhmmss')
 def viash_config = java.nio.file.Paths.get("${moduleDir}/_viash.yaml")
 def version = get_version(viash_config)
+
+session = nextflow.Nextflow.getSession()
+final service = session.publishDirExecutorService()
+
 
 workflow run_wf {
   take:
@@ -51,13 +57,16 @@ workflow run_wf {
           state + result + [ to_return: result ]
         },
       )
-      | publish.run(
-        fromState: { id, state ->
-          println(state.plain_output)
+      | map {id, state ->
           def id1 = (state.plain_output) ? id : "${state.run_id}/${date}"
           def id2 = (state.plain_output) ? id : "${id1}_demultiplex_${version}"
-
           def prefix = (id2 == "run") ? "" : "${id2}/"
+          def new_state = state + ["prefix": prefix]
+          [id, new_state]
+      }
+      | publish.run(
+        fromState: { id, state ->
+          def prefix = state.prefix
           // These output names are determined by arguments.
           def fastq_output_1 = "${prefix}${state.fastq_output_workflow}"
           def sample_qc_output_1 = "${prefix}${state.sample_qc_output_workflow}"
@@ -67,18 +76,6 @@ workflow run_wf {
           def run_information_output_1 = "${prefix}${state.output_run_information.getName()}"
 
           println("Publising to ${params.publish_dir}/${prefix}")
-
-          // Create a file to indicate that the publishing (transfer) of files has been completed.
-          // Multiple items can be added to onCompleteActions; which is required when processing multiple sequencing runs at a time.
-          // Alternatively setOnComplete could be used to add actions, but that only adds them at the end of the list (which is executed in order).
-          // The 'completed.txt' file must be created before the onComplete of the integration tests are run, so we need to prepend to the list.
-          workflow.onCompleteActions.add(0, {
-            if (workflow.exitStatus == 0) { 
-              def complete_file = file("${params.publish_dir}/${prefix}/transfer_completed.txt")
-              complete_file.text = "" // This will create a file when it does not exist.
-            }
-          })
-
           [
             input: state.output,
             input_sample_qc: state.output_sample_qc,
@@ -92,7 +89,7 @@ workflow run_wf {
             output_demultiplexer_logs: demultiplexer_logs_output,
           ]
         },
-        toState: { id, result, state -> [ fastq_output: state.to_return.output ] },
+        toState: { id, result, state -> [ "fastq_output": state.to_return.output, "prefix": state.prefix ] },
         directives: [
           publishDir: [
             path: "${params.publish_dir}", 
@@ -102,8 +99,60 @@ workflow run_wf {
         ]
       )
 
+has_published = new AtomicBoolean(false)
+
+interval_ch = channel.interval('10s'){ i ->
+  // Allow this channel to stop generating events based on a later signal
+  if (has_published.get()) {
+    return channel.STOP
+  }
+  i
+}
+
+await_ch = output_ch
+  // Wait for demultiplexing processes to be done
+  | toSortedList()
+  // Create periodic events in order to check for the publishing to be done
+  | combine(interval_ch)
+  | until { event ->
+    println("Checking if publishing has finished in service ${service}")
+    def running_tasks = null
+    if(service instanceof ThreadPoolExecutor) {
+      def completed_tasks = service.getCompletedTaskCount()
+      def task_count = service.getTaskCount()
+      running_tasks = completed_tasks - task_count
+    }
+    else if( System.getenv('NXF_ENABLE_VIRTUAL_THREADS') ) {
+      running_tasks = service.threadCount()
+    }
+    else {
+      error("Publishing service of class ${service.getClass()} is not supported.")
+    }
+    
+    if (running_tasks == 0) {
+      println("Publishing has finished all current tasks. Continuing execution.")
+      return true
+    }
+    println("Workflow is publishing. Waiting...")
+    return false
+  }
+  | last()
+  | map{ event ->
+      // Signal to interval channel to stop generating events.
+      has_published.compareAndSet(false, true)
+      return event[0]
+  }
+  | map {id, state ->
+      println("Creating transfer_complete.txt file.")
+      def complete_file = file("${params.publish_dir}/${state.prefix}/transfer_completed.txt")
+      complete_file.text = "" // This will create a file when it does not exist.
+      [id, state]
+  }
+  | setState(["fastq_output"])
+
+
   emit:
-    output_ch
+    await_ch
 }
 
 def get_version(input) {
