@@ -1,3 +1,9 @@
+# demultiplex v0.4.5
+
+## Bug fixes
+
+* Disable `publishFilesProc` for `runner` workflow (PR #60).
+
 # demultiplex v0.4.4
 
 ## Bug fixes
