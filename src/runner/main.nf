@@ -14,7 +14,7 @@ workflow run_wf {
     input_ch
 
   main:
-    output_ch = input_ch
+    id_ch = input_ch
       | map { id, state -> 
         // The argument names for this workflow and the demultiplex workflow may overlap
         // here, we store a copy in order to make sure to not accidentally overwrite the state.
@@ -30,11 +30,21 @@ workflow run_wf {
       // If the input is a tarball, strip the suffix.
       | map{ id, state ->
         def id_with_suffix = state.input.getFileName().toString()
+        def new_id = id_with_suffix - ~/\.(tar.gz|tgz|tar)$/
         [
-          id,
-          state + [ run_id: id_with_suffix - ~/\.(tar.gz|tgz|tar)$/ ]
+          new_id,
+          state + [ run_id: new_id, "_meta": ["join_id": id]]
         ]
       }
+
+      id_ch
+        | toSortedList()
+        | map{events ->
+          def ids = events.collect{it[0]}
+          assert ids.toSet().size() == ids.size(), "The names of the input .tar files or directories are not unique!"
+        }
+
+      output_ch = id_ch
       | demultiplex.run(
         fromState: { id, state ->
           def state_to_pass = [
@@ -89,7 +99,7 @@ workflow run_wf {
             output_demultiplexer_logs: demultiplexer_logs_output,
           ]
         },
-        toState: { id, result, state -> [ "fastq_output": state.to_return.output, "prefix": state.prefix ] },
+        toState: { id, result, state -> [ "fastq_output": state.to_return.output, "prefix": state.prefix, "_meta": state._meta ] },
         directives: [
           publishDir: [
             path: "${params.publish_dir}", 
@@ -110,6 +120,7 @@ interval_ch = channel.interval('10s'){ i ->
 }
 
 await_ch = output_ch
+  | view {"HERE: $it"}
   // Wait for demultiplexing processes to be done
   | toSortedList()
   // Create periodic events in order to check for the publishing to be done
@@ -148,7 +159,7 @@ await_ch = output_ch
       complete_file.text = "" // This will create a file when it does not exist.
       [id, state]
   }
-  | setState(["fastq_output"])
+  | setState(["fastq_output", "_meta"])
 
 
   emit:

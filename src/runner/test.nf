@@ -40,6 +40,22 @@ workflow test {
     | runner.run(
         fromState: {id, state -> state }
     )
+    
+    all_events_ch = output_ch
+      | toSortedList()
+      | map{states ->
+        assert states.size() == 1
+      }
+
+    output_ch 
+      | map {id, state ->
+        assert id == "200624_A00834_0183_BHMTFYDRXX"
+        assert state.fastq_output.isDirectory()
+        assert state.sample_qc_output.isDirectory()
+        assert state.multiqc_output.isFile()
+        assert state.demultiplexer_logs.isDirectory()
+      }
+
     workflow.onComplete = {
         try {
             // Nexflow only allows exceptions generated using the 'error' function (which throws WorkflowScriptErrorException).
