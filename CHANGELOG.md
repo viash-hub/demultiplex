@@ -2,7 +2,7 @@
 
 ## Breaking changes
 
-* The output state from the runner now uses the name of the publishing directory as id (PR #61).
+* `runner`: the name of the output directory is now determined based on the value for the event `id` instead of the name of the input folder (PR #62).
 
 ## Bug fixes
 

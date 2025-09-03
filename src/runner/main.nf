@@ -14,7 +14,7 @@ workflow run_wf {
     input_ch
 
   main:
-    id_ch = input_ch
+    output_ch = input_ch
       | map { id, state -> 
         // The argument names for this workflow and the demultiplex workflow may overlap
         // here, we store a copy in order to make sure to not accidentally overwrite the state.
@@ -23,28 +23,10 @@ workflow run_wf {
           "multiqc_output_workflow": state.multiqc_output,
           "sample_qc_output_workflow": state.sample_qc_output,
           "demultiplexer_logs_workflow": state.demultiplexer_logs,
+          "run_id": id
         ]
         return [id, new_state]
       }
-      // Extract the ID from the input.
-      // If the input is a tarball, strip the suffix.
-      | map{ id, state ->
-        def id_with_suffix = state.input.getFileName().toString()
-        def new_id = id_with_suffix - ~/\.(tar.gz|tgz|tar)$/
-        [
-          new_id,
-          state + [ run_id: new_id, "_meta": ["join_id": id]]
-        ]
-      }
-
-      id_ch
-        | toSortedList()
-        | map{events ->
-          def ids = events.collect{it[0]}
-          assert ids.toSet().size() == ids.size(), "The names of the input .tar files or directories are not unique!"
-        }
-
-      output_ch = id_ch
       | demultiplex.run(
         fromState: { id, state ->
           def state_to_pass = [
@@ -99,7 +81,14 @@ workflow run_wf {
             output_demultiplexer_logs: demultiplexer_logs_output,
           ]
         },
-        toState: { id, result, state -> [ "fastq_output": state.to_return.output, "prefix": state.prefix, "_meta": state._meta ] },
+        toState: { id, result, state -> [ 
+            "fastq_output": result.output, 
+            "prefix": state.prefix,
+            "multiqc_output": result.output_multiqc,
+            "sample_qc_output": result.output_sample_qc,
+            "demultiplexer_logs": result.output_demultiplexer_logs,
+          ]
+        },
         directives: [
           publishDir: [
             path: "${params.publish_dir}", 
@@ -158,7 +147,12 @@ await_ch = output_ch
       complete_file.text = "" // This will create a file when it does not exist.
       [id, state]
   }
-  | setState(["fastq_output", "_meta"])
+  | setState([
+    "fastq_output",
+    "multiqc_output",
+    "sample_qc_output",
+    "demultiplexer_logs"
+  ])
 
 
   emit:
