@@ -49,7 +49,7 @@ workflow test {
 
     output_ch 
       | map {id, state ->
-        assert id == "200624_A00834_0183_BHMTFYDRXX"
+        assert id == "test"
         assert state.fastq_output.isDirectory()
         assert state.sample_qc_output.isDirectory()
         assert state.multiqc_output.isFile()
@@ -62,7 +62,7 @@ workflow test {
             // So in order for the assert statement to work (or allow other errors to let the tests to fail)
             // We need to wrap these in WorkflowScriptErrorException. See https://github.com/nextflow-io/nextflow/pull/4458/files
             // The error message will show up in .nextflow.log
-            def publish_subdir = file("${params.publish_dir}/200624_A00834_0183_BHMTFYDRXX")
+            def publish_subdir = file("${params.publish_dir}/test")
             assert publish_subdir.isDirectory() 
             def all_files = publish_subdir.listFiles()
             assert all_files.size() == 1
