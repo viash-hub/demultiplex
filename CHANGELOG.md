@@ -4,6 +4,10 @@
 
 * The output state from the runner now uses the name of the publishing directory as id (PR #61).
 
+## Bug fixes
+
+* Disable `publishFilesProc` for `runner` workflow (PR #60).
+
 # demultiplex v0.4.4
 
 ## Bug fixes
