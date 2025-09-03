@@ -1,3 +1,9 @@
+# demultiplex v0.5.0
+
+## Breaking changes
+
+* The output state from the runner now uses the name of the publishing directory as id (PR #61).
+
 # demultiplex v0.4.4
 
 ## Bug fixes
