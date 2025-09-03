@@ -120,7 +120,6 @@ interval_ch = channel.interval('10s'){ i ->
 }
 
 await_ch = output_ch
-  | view {"HERE: $it"}
   // Wait for demultiplexing processes to be done
   | toSortedList()
   // Create periodic events in order to check for the publishing to be done
