@@ -71,7 +71,7 @@ workflow run_wf {
           // The name of the output file for the run information is determined by the input file name.
           def run_information_output_1 = "${prefix}${state.output_run_information.getName()}"
 
-          println("Publising to ${publish_dir}/${prefix}")
+          println("Publishing to ${publish_dir}/${prefix}")
           [
             input: state.output,
             input_sample_qc: state.output_sample_qc,
