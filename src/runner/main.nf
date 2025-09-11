@@ -9,6 +9,10 @@ session = nextflow.Nextflow.getSession()
 final service = session.publishDirExecutorService()
 
 
+// S3 paths containing double slashes might cause issues with empty objects being created
+// Remove trailing slashes from the publish dir. The params map is immutable, so create a copy
+def publish_dir = params.publish_dir - ~/\/+$/
+
 workflow run_wf {
   take:
     input_ch
@@ -67,7 +71,7 @@ workflow run_wf {
           // The name of the output file for the run information is determined by the input file name.
           def run_information_output_1 = "${prefix}${state.output_run_information.getName()}"
 
-          println("Publising to ${params.publish_dir}/${prefix}")
+          println("Publishing to ${publish_dir}/${prefix}")
           [
             input: state.output,
             input_sample_qc: state.output_sample_qc,
@@ -91,7 +95,7 @@ workflow run_wf {
         },
         directives: [
           publishDir: [
-            path: "${params.publish_dir}", 
+            path: publish_dir,
             overwrite: false,
             mode: "copy"
           ]

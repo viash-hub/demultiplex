@@ -1,3 +1,11 @@
+# demultiplex v0.5.1
+
+## Bug fixes
+
+* Fix disabling `publishFilesProc` and `publishStateProc` for `runner` workflow (PR #63).
+
+* Avoid double slashes in the publish directory path in order to not create empty objects on S3 (PR #64).
+
 # demultiplex v0.5.0
 
 ## Breaking changes
