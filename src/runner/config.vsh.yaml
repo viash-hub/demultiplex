@@ -64,7 +64,7 @@ resources:
   - type: nextflow_script
     path: main.nf
     entrypoint: run_wf
-  - path: disable_publishfiles_process.config
+  - path: disable_publish_processes.config
 test_resources:
   - type: nextflow_script
     path: test.nf
@@ -80,7 +80,7 @@ runners:
   - type: nextflow
     config: 
       script: 
-        - includeConfig("disable_publishfiles_process.config")
+        - includeConfig("disable_publish_processes.config")
 
 engines:
   - type: native
