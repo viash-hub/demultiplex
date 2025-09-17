@@ -2,7 +2,7 @@
 
 # New functionality
 
-* Bump biobox to `v0.4.0`. This this updates `bases2fastq` to version `2.2.0` and 
+* Bump biobox to `v0.4.0`. This updates `bases2fastq` to version `2.2.0` and 
   enables support for demultiplexing output from sequencers running AVITI OS 3.4.0 (PR #65).
 
 # demultiplex v0.5.1
