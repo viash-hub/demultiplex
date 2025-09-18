@@ -1,3 +1,9 @@
+# demultiplex v0.x.x
+
+## Minor changes
+
+* Disable native `bases2fastq` MultiQC report because the workflow generates one itself (PR #).
+
 # demultiplex v0.6.0
 
 # New functionality
