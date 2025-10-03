@@ -106,7 +106,7 @@ repositories:
   - name: bb
     type: vsh
     repo: biobox
-    tag: v0.4.0
+    tag: v0.4.1
 
 runners:
   - type: nextflow

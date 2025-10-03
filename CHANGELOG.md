@@ -1,3 +1,12 @@
+# demultiplex v0.6.1
+
+## Minor changes
+
+* Disable native `bases2fastq` MultiQC report because the workflow generates one itself (PR #66).
+
+* Bump biobox to `v0.4.1`. This updates `bases2fastq` to version `2.2.1` (PR #67).
+
+
 # demultiplex v0.6.0
 
 # New functionality

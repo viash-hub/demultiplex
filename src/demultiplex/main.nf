@@ -89,6 +89,7 @@ workflow run_wf {
           //"split_lanes": true,
           "legacy_fastq": true, // Illumina style output names
           "group_fastq": true, // No subdir per sample
+          "skip_multi_qc": true // This pipeline generates its own MultiQC report
         ],
         toState: {id, result, state -> 
           def toAdd = [
