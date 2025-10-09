@@ -74,7 +74,7 @@ workflow run_wf {
       // run bases2fastq
       | bases2fastq.run(
         runIf: {id, state -> state.demultiplexer in ["bases2fastq"]},
-        directives: [label: ["highmem", "midcpu"]],
+        directives: [label: ["veryhighmem", "midcpu"]],
         fromState: { id, state ->
           [
             "analysis_directory": state.input,
@@ -115,7 +115,7 @@ workflow run_wf {
 
     output_ch = samples_ch 
       | fastqc.run(
-        directives: [label: ["verylowcpu", "lowmem"]],
+        directives: [label: ["lowcpu", "midmem"]],
         fromState: {id, state ->
           def output_base = "$id/qc/fastqc/*"
           [
