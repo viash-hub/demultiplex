@@ -1,3 +1,10 @@
+# demultiplex v0.6.2
+
+## Bug fixes
+
+* `bases2fastq` is configured with more memory than the previously provided 64GB (the release notes specify at least 6GB per thread).
+* More resources for `fastqc` to improve running times.
+
 # demultiplex v0.6.1
 
 ## Minor changes
