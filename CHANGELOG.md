@@ -1,3 +1,9 @@
+# demultiplex v0.6.3
+
+## Bug fixes
+
+* `runner`: fix resume functionality when used as subworkflow (PR #70).
+
 # demultiplex v0.6.2
 
 ## Bug fixes
