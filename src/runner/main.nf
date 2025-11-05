@@ -86,11 +86,16 @@ workflow run_wf {
           ]
         },
         toState: { id, result, state -> [ 
-            "fastq_output": result.output, 
+            // Most of the output is copied from the input state
+            // This allows for resume functionality to work when using any of these outputs
+            // because the restult state contains a unique date in the path.
+            // Only for the sample QC ouput, multiple results are gathered 
+            // so we must use the resulting output directory.
+            "fastq_output": state.output, 
             "prefix": state.prefix,
-            "multiqc_output": result.output_multiqc,
+            "multiqc_output": state.multiqc_output,
             "sample_qc_output": result.output_sample_qc,
-            "demultiplexer_logs": result.output_demultiplexer_logs,
+            "demultiplexer_logs": state.demultiplexer_logs,
           ]
         },
         directives: [
