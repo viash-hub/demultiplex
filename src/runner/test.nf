@@ -21,7 +21,7 @@ if (!params.publish_dir) {
             println "Failed to delete temp directory: $e"
         }
     }))
-    params.publish_dir = tempDir
+    params.publish_dir = tempDir.toString()
 }
 // The module inherits the parameters defined before the include statement, 
 // therefore any parameters set afterwards will not be used by the module.
