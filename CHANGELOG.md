@@ -1,3 +1,9 @@
+# demultiplex v0.6.4
+
+## Minor changes
+
+* Replace FastQC by Falco again, Falco is not able to handle empty FASTQ files (PR #).
+
 # demultiplex v0.6.3
 
 ## Bug fixes

@@ -96,7 +96,7 @@ dependencies:
     repository: bb
   - name: bases2fastq
     repository: bb
-  - name: fastqc
+  - name: falco
     repository: bb
   - name: multiqc
     repository: bb

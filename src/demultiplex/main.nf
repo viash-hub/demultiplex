@@ -114,24 +114,21 @@ workflow run_wf {
       )
 
     output_ch = samples_ch 
-      | fastqc.run(
+      | falco.run(
         directives: [label: ["lowcpu", "midmem"]],
         fromState: {id, state ->
-          def output_base = "$id/qc/fastqc/*"
           [
             "input": [state.fastq_forward, state.fastq_reverse],
-            "html": "${output_base}_fastqc_report.html",
-            "summary": "${output_base}_summary.txt",
-            "data": "${output_base}_fastqc_data.txt",
+            "outdir": "$id/qc/falco",
+            "summary_filename": null,
+            "report_filename": null,
+            "data_filename": null,
           ]
         },
         toState: { id, result, state ->
-          // The output directory for all files above is the same:
-          // take the directory from one of the files
-          state + [ "output_sample_qc": result.html[0].parent ]
+          state + [ "output_sample_qc" : result.outdir ]
         }
       )
-
       | combine_samples.run(
         fromState: { id, state ->
           [
