@@ -114,7 +114,6 @@ workflow run_wf {
       )
 
     output_ch = samples_ch
-      | view {"HERE: $it"}
       | falco.run(
         directives: [label: ["lowcpu", "midmem"]],
         fromState: {id, state ->
@@ -124,7 +123,7 @@ workflow run_wf {
             "outdir": "$id/qc/falco",
             "summary_filename": null,
             "report_filename": null,
-            "data_filename": null
+            "data_filename": null,
           ]
           // When a single FASTQ is being processed, Falco does not automatically
           // determine the basename from the input file. But this can be done manually here.
