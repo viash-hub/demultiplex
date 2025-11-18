@@ -124,6 +124,7 @@ workflow run_wf {
             "summary_filename": null,
             "report_filename": null,
             "data_filename": null,
+            "allow_empty_input": true
           ]
           // When a single FASTQ is being processed, Falco does not automatically
           // determine the basename from the input file. But this can be done manually here.
