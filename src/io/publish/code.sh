@@ -19,7 +19,7 @@ do
     mkdir -p $(dirname "$output_location") && echo "Containing directory $output_location created"
 
     echo "Copying files..."
-    cp -rL "$input_location" "$output_location"
+    cp -a --keep-directory-symlink "$input_location" "$output_location"
 
     echo "Output files for $output_location:"
     ls "$output_location"
@@ -30,5 +30,5 @@ mkdir -p "$par_output_sample_qc"
 IFS=";" read -ra sample_qc_inputs <<< $par_input_sample_qc
 for qc_dir in "${sample_qc_inputs[@]}"; do
     echo "Copying contents of $qc_dir"
-    find -H -D exec "$qc_dir" -type f -maxdepth 1 -exec cp -t "$par_output_sample_qc" {} +
+    find -H -D exec "$qc_dir" -type f -maxdepth 1 -exec cp -a --keep-directory-symlink -t "$par_output_sample_qc" {} +
 done
