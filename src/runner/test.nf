@@ -76,21 +76,21 @@ workflow test {
             assert published_items.collect{it.name}.toSet() == ["demultiplexer_logs", "fastq", "qc", "SampleSheet.csv", "transfer_completed.txt"].toSet()
             def fastqc_files = publish_dir.resolve("qc/fastqc").listFiles()
             assert fastqc_files.collect{it.name}.toSet() == [
-                "Sample1_S1_L001_R1_001_fastqc_data.txt",
-                "Sample1_S1_L001_R1_001_fastqc_report.html",
-                "Sample1_S1_L001_R1_001_summary.txt",
-                "Sample23_S3_L001_R1_001_fastqc_data.txt",
-                "Sample23_S3_L001_R1_001_fastqc_report.html",
-                "Sample23_S3_L001_R1_001_summary.txt",
-                "SampleA_S2_L001_R1_001_fastqc_data.txt",
-                "SampleA_S2_L001_R1_001_fastqc_report.html",
-                "SampleA_S2_L001_R1_001_summary.txt",
-                "sampletest_S4_L001_R1_001_fastqc_data.txt",
-                "sampletest_S4_L001_R1_001_fastqc_report.html",
-                "sampletest_S4_L001_R1_001_summary.txt",
-                "Undetermined_S0_L001_R1_001_fastqc_data.txt",
-                "Undetermined_S0_L001_R1_001_fastqc_report.html",
-                "Undetermined_S0_L001_R1_001_summary.txt"
+                "Sample1_S1_L001_R1_001.fastq.gz_fastqc_data.txt",
+                "Sample1_S1_L001_R1_001.fastq.gz_fastqc_report.html",
+                "Sample1_S1_L001_R1_001.fastq.gz_summary.txt",
+                "Sample23_S3_L001_R1_001.fastq.gz_fastqc_data.txt",
+                "Sample23_S3_L001_R1_001.fastq.gz_fastqc_report.html",
+                "Sample23_S3_L001_R1_001.fastq.gz_summary.txt",
+                "SampleA_S2_L001_R1_001.fastq.gz_fastqc_data.txt",
+                "SampleA_S2_L001_R1_001.fastq.gz_fastqc_report.html",
+                "SampleA_S2_L001_R1_001.fastq.gz_summary.txt",
+                "sampletest_S4_L001_R1_001.fastq.gz_fastqc_data.txt",
+                "sampletest_S4_L001_R1_001.fastq.gz_fastqc_report.html",
+                "sampletest_S4_L001_R1_001.fastq.gz_summary.txt",
+                "Undetermined_S0_L001_R1_001.fastq.gz_fastqc_data.txt",
+                "Undetermined_S0_L001_R1_001.fastq.gz_fastqc_report.html",
+                "Undetermined_S0_L001_R1_001.fastq.gz_summary.txt"
             ].toSet()
             assert publish_dir.resolve("qc/multiqc_report.html").exists()
             def fastq_files = publish_dir.resolve("fastq").listFiles()

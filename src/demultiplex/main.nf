@@ -113,17 +113,30 @@ workflow run_wf {
         ],
       )
 
-    output_ch = samples_ch 
+    output_ch = samples_ch
       | falco.run(
         directives: [label: ["lowcpu", "midmem"]],
         fromState: {id, state ->
-          [
-            "input": [state.fastq_forward, state.fastq_reverse],
+          def input = state.fastq_forward + state.fastq_reverse
+          def state_mapping = [
+            "input": input,
             "outdir": "$id/qc/falco",
             "summary_filename": null,
             "report_filename": null,
             "data_filename": null,
+            "allow_empty_input": true
           ]
+          // When a single FASTQ is being processed, Falco does not automatically
+          // determine the basename from the input file. But this can be done manually here.
+          if (input.size() == 1) {
+            def basename = input[0].name 
+            state_mapping += [
+              "summary_filename": "$id/qc/falco/${basename}_summary.txt",
+              "report_filename": "$id/qc/falco/${basename}_fastqc_report.html",
+              "data_filename": "$id/qc/falco/${basename}_fastqc_data.txt"
+            ]
+          }
+          return state_mapping
         },
         toState: { id, result, state ->
           state + [ "output_sample_qc" : result.outdir ]
