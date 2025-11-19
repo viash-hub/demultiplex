@@ -113,25 +113,35 @@ workflow run_wf {
         ],
       )
 
-    output_ch = samples_ch 
-      | fastqc.run(
+    output_ch = samples_ch
+      | falco.run(
         directives: [label: ["lowcpu", "midmem"]],
         fromState: {id, state ->
-          def output_base = "$id/qc/fastqc/*"
-          [
-            "input": [state.fastq_forward, state.fastq_reverse],
-            "html": "${output_base}_fastqc_report.html",
-            "summary": "${output_base}_summary.txt",
-            "data": "${output_base}_fastqc_data.txt",
+          def input = state.fastq_forward + state.fastq_reverse
+          def state_mapping = [
+            "input": input,
+            "outdir": "$id/qc/falco",
+            "summary_filename": null,
+            "report_filename": null,
+            "data_filename": null,
+            "allow_empty_input": true
           ]
+          // When a single FASTQ is being processed, Falco does not automatically
+          // determine the basename from the input file. But this can be done manually here.
+          if (input.size() == 1) {
+            def basename = input[0].name 
+            state_mapping += [
+              "summary_filename": "$id/qc/falco/${basename}_summary.txt",
+              "report_filename": "$id/qc/falco/${basename}_fastqc_report.html",
+              "data_filename": "$id/qc/falco/${basename}_fastqc_data.txt"
+            ]
+          }
+          return state_mapping
         },
         toState: { id, result, state ->
-          // The output directory for all files above is the same:
-          // take the directory from one of the files
-          state + [ "output_sample_qc": result.html[0].parent ]
+          state + [ "output_sample_qc" : result.outdir ]
         }
       )
-
       | combine_samples.run(
         fromState: { id, state ->
           [

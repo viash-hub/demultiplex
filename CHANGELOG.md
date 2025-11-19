@@ -1,3 +1,11 @@
+# demultiplex v0.6.4
+
+## Minor changes
+
+* Replace FastQC by Falco again, Falco is now able to handle empty FASTQ files (PR #71, PR #73).
+
+* Improve publishing speed by keeping symbolic links (PR #72).
+
 # demultiplex v0.6.3
 
 ## Bug fixes
