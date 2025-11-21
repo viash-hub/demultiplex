@@ -1,3 +1,9 @@
+# demultiplex v0.7.0
+
+## Major changes
+
+* Bump biobox to `v0.4.2`, which upgrades `bases2fastq` to `2.3.0` (PR #74).
+
 # demultiplex v0.6.4
 
 ## Minor changes
