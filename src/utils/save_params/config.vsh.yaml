@@ -1,0 +1,52 @@
+name: save_params
+namespace: utils
+description: |
+  Save parameters to a YAML file
+
+argument_groups:
+  - name: Inputs
+    arguments:
+      - name: "--id"
+        description: |
+          The id of the job
+        type: string
+        required: true
+      - name: "--params_yaml"
+        description: |
+          base64 encoded yaml containing the state
+        type: string
+        required: true
+      - name: "--workflow_analysis"
+        description: |
+          Base64 encoded YAML containing workflow analysis information (name and version for all workflows)
+        type: string
+        required: false
+    
+  - name: Outputs
+    arguments:
+      - name: "--output"
+        description: |
+          The output YAML file
+        type: file
+        default: "params.yaml"
+        direction: output
+        required: true
+
+resources:
+  - type: python_script
+    path: script.py
+
+engines:
+  - type: docker
+    image: python:3.12-slim
+    setup:
+      - type: apt
+        packages:
+          - procps
+      - type: python
+        packages:
+          - pyyaml
+
+runners:
+  - type: executable
+  - type: nextflow
