@@ -72,8 +72,8 @@ workflow test {
             // Disabling this test temporarily and creating an issue for it
             // assert publish_dir.name.endsWith("_demultiplex_unknown_version")
             def published_items = publish_dir.listFiles()
-            assert published_items.size() == 5
-            assert published_items.collect{it.name}.toSet() == ["demultiplexer_logs", "fastq", "qc", "SampleSheet.csv", "transfer_completed.txt"].toSet()
+            assert published_items.size() == 6
+            assert published_items.collect{it.name}.toSet() == ["demultiplexer_logs", "fastq", "qc", "SampleSheet.csv", "params.yaml", "transfer_completed.txt"].toSet()
             def fastqc_files = publish_dir.resolve("qc/fastqc").listFiles()
             assert fastqc_files.collect{it.name}.toSet() == [
                 "Sample1_S1_L001_R1_001.fastq.gz_fastqc_data.txt",

@@ -24,6 +24,9 @@ argument_groups:
       - name: "--input_demultiplexer_logs"
         type: file
         required: true
+      - name: "--input_demultiplex_params"
+        type: file
+        required: true
   - name: Output arguments
     arguments:
       - name: --output
@@ -46,6 +49,10 @@ argument_groups:
         type: file
         direction: output
         default: "demultiplexer_logs"
+      - name: "--output_demultiplex_params"
+        type: file
+        direction: output
+        default: "params.yaml"
 
 resources:
   - type: bash_script
