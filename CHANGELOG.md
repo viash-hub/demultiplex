@@ -1,3 +1,9 @@
+# demultiplex vx.x.x
+
+## New functionality
+
+* Add `utils/save_params` to the `workflows/runner`, tracking input parameters and workflow dependencies in a YAML file (PR #75).
+
 # demultiplex v0.7.0
 
 ## Major changes
