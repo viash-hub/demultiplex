@@ -2,11 +2,11 @@ import java.nio.file.Files
 import nextflow.exception.WorkflowScriptErrorException
 
 // Create temporary directory for the publish_dir if it is not defined
-if (!params.publish_dir && params.publishDir) {
+if (params.containsKey("publish_dir") && params.publishDir) {
     params.publish_dir = params.publishDir
 }
 
-if (!params.publish_dir) {
+if (!params.containsKey("publish_dir")) {
     def tempDir = Files.createTempDirectory("demultiplex_runner_integration_test")
     println "Created temp directory: $tempDir"
     // Register shutdown hook to delete it on JVM exit
@@ -108,4 +108,45 @@ workflow test {
     }
 
 }
+
+
+workflow test_multiple_runs {
+    output_ch = Channel.fromList([
+        [
+          id: "test",
+          input: params.resources_test + "200624_A00834_0183_BHMTFYDRXX.tar.gz",
+        ],
+        [
+          id: "what_about_second_test",
+          input: params.resources_test + "200624_A00834_0183_BHMTFYDRXX.tar.gz",
+        ]
+    ])
+    | map {event -> [event.id, event] }
+    | runner.run(
+        fromState: {id, state -> state }
+    )
+    
+    all_events_ch = output_ch
+      | toSortedList()
+      | map{states ->
+        assert states.size() == 2
+      }
+
+}
+
+
+workflow test_empty_channel {
+    output_ch = channel.empty()
+    | runner.run(
+        fromState: {id, state -> state }
+    )
+    
+    all_events_ch = output_ch
+      | toSortedList()
+      | map{states ->
+        assert states.size() == 0
+      }
+
+}
+
 

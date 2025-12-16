@@ -114,13 +114,19 @@ workflow run_wf {
       )
 
     output_ch = samples_ch
+      // The gather_fastqs_and_validate subworkflow outputs sample IDs as the IDs of the events
+      // Add the `run_id` (the input event ID) to the events in order to make sure they are unique
+      // in case the same sample is present is multiple sequencing runs.
+      | map {sample_id, state ->
+        ["${state.run_id}/${sample_id}", state + ["sample_id": sample_id]]
+      }
       | falco.run(
         directives: [label: ["lowcpu", "midmem"]],
         fromState: {id, state ->
           def input = state.fastq_forward + state.fastq_reverse
           def state_mapping = [
             "input": input,
-            "outdir": "$id/qc/falco",
+            "outdir": "${state.sample_id}/qc/falco",
             "summary_filename": null,
             "report_filename": null,
             "data_filename": null,
@@ -131,9 +137,9 @@ workflow run_wf {
           if (input.size() == 1) {
             def basename = input[0].name 
             state_mapping += [
-              "summary_filename": "$id/qc/falco/${basename}_summary.txt",
-              "report_filename": "$id/qc/falco/${basename}_fastqc_report.html",
-              "data_filename": "$id/qc/falco/${basename}_fastqc_data.txt"
+              "summary_filename": "${state.sample_id}/qc/falco/${basename}_summary.txt",
+              "report_filename": "${state.sample_id}/qc/falco/${basename}_fastqc_report.html",
+              "data_filename": "${state.sample_id}/qc/falco/${basename}_fastqc_data.txt"
             ]
           }
           return state_mapping

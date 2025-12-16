@@ -191,9 +191,37 @@ interval_ch = channel.interval('10s'){ i ->
 await_ch = output_ch
   // Wait for demultiplexing processes to be done
   | toSortedList()
+  // Allow no output
+  | map{ list ->
+    if (list.size() == 0) {
+      // Combine does something weird where if the output list is of size 1,
+      // it will unpack the result (i.e. it will output a value instead of a list)
+      // So we output [null] instead of [] to and combine it with a filter to remove
+      // the events when there is no output
+      return [null]
+    }
+    list
+  }
   // Create periodic events in order to check for the publishing to be done
   | combine(interval_ch)
+  // Until does something weird in a sense that it still executes the provided close
+  // even when a filter would be applied before it that removes the events that have
+  // 'null' as the first item. So do if afterwards.
   | until { event ->
+    // Prevent until to output nothing by stopping on the first item of the channel.
+    // It will output 'null' when its the first iteration.
+    // This happens when there is not a lot of data to publish and/or the transfer is fast.
+    if (event[-1] == 0) {
+      return false
+    }
+    
+    if (event.size() == 2 && event[0] == null) {
+      // There was nothing to publish
+      log.info("Nothing needs to be published. Continuing execution.")
+      has_published.compareAndSet(false, true)
+      return true
+    }
+
     println("Checking if publishing has finished in service ${service}")
     def running_tasks = null
     if(service instanceof ThreadPoolExecutor) {
@@ -216,16 +244,23 @@ await_ch = output_ch
     return false
   }
   | last()
+  // Filter out the events in case there was nothing to publish.
+  // This could have been done before 'last', but it does something 
+  // weird where it outputs a 'null' value event when the channel is empty.
+  | filter {event -> event.size() != 2 || event[0] != null}
   | map{ event ->
       // Signal to interval channel to stop generating events.
       has_published.compareAndSet(false, true)
-      return event[0]
+      def result = event.dropRight(1)
+      return result
   }
-  | map {id, state ->
-      println("Creating transfer_complete.txt file.")
-      def complete_file = file("${params.publish_dir}/${state.prefix}/transfer_completed.txt")
-      complete_file.text = "" // This will create a file when it does not exist.
-      [id, state]
+  | flatMap { events ->
+      events.each { id, state ->
+        println("Creating transfer_complete.txt file for ${state.prefix}.")
+        def complete_file = file("${params.publish_dir}/${state.prefix}/transfer_completed.txt")
+        complete_file.text = "" // This will create a file when it does not exist.
+      }
+      events
   }
   | setState([
     "fastq_output",
