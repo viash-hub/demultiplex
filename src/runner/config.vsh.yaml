@@ -69,6 +69,12 @@ test_resources:
   - type: nextflow_script
     path: test.nf
     entrypoint: test
+  - type: nextflow_script
+    path: test.nf
+    entrypoint: test_multiple_runs
+  - type: nextflow_script
+    path: test.nf
+    entrypoint: test_empty_channel
 
 dependencies:
   - name: demultiplex
