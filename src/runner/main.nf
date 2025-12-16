@@ -13,12 +13,79 @@ final service = session.publishDirExecutorService()
 // Remove trailing slashes from the publish dir. The params map is immutable, so create a copy
 def publish_dir = params.publish_dir - ~/\/+$/
 
+def get_workflow_analysis(viashConfigFile) {
+  def dependencies = []
+  
+  if (meta.config.dependencies) {
+    meta.config.dependencies.each { dep_spec ->
+      def dependency_name = dep_spec.alias ? dep_spec.alias : dep_spec.name
+      def dependency_var = file(dependency_name).name
+      def dependency = binding.getVariable(dependency_var)
+        
+      def dep_entry = new LinkedHashMap()
+      dep_entry.name = dependency.config.name ?: "unknown_name"
+      dep_entry.version = dependency.config.version ?: "unknown_version"
+      dependencies << dep_entry
+    }
+  }
+  
+  // Build main analysis entry with dependencies using LinkedHashMap for order
+  def main_entry = new LinkedHashMap()
+  main_entry.name = meta.config.name ?: "unknown_name"
+  main_entry.version = meta.config.version ?: "unknown_version"
+  main_entry.dependencies = dependencies
+  
+  def analysis = [main_entry]
+  
+  println("Analysis workflows: ${analysis}")
+  return analysis
+}
+
+
 workflow run_wf {
   take:
     input_ch
 
   main:
     output_ch = input_ch
+
+      | save_params.run(
+        fromState: {id, state ->
+          // Define the function before using it
+          def convertPaths
+          convertPaths = { value ->
+            if (value instanceof java.nio.file.Path)
+              return value.toUriString()
+            else if (value instanceof List)
+              return value.collect { convertPaths(it) }
+            else if (value instanceof Collection)
+              throw new UnsupportedOperationException("Collections other than Lists are not supported")
+            else
+              return value
+          }
+          
+          // Apply conversion to all state values
+          def convertedState = state.collectEntries { k, v -> [(k): convertPaths(v)] }
+          
+          def yaml = new org.yaml.snakeyaml.Yaml()
+          def yamlString = yaml.dump(convertedState)
+          def encodedYaml = yamlString.bytes.encodeBase64().toString()
+          
+          def yaml_builder = new org.yaml.snakeyaml.Yaml()
+          def analysis_yaml = yaml_builder.dump(get_workflow_analysis(viash_config))
+          def encoded_analysis = analysis_yaml.bytes.encodeBase64().toString()
+          
+          return [
+            "id": id,
+            "params_yaml": encodedYaml,
+            "workflow_analysis": encoded_analysis
+          ]
+        },
+        toState: { id, output, state ->
+          state + [ demultiplex_params: output.output ]
+        }
+      )
+
       | map { id, state -> 
         // The argument names for this workflow and the demultiplex workflow may overlap
         // here, we store a copy in order to make sure to not accidentally overwrite the state.
@@ -70,6 +137,7 @@ workflow run_wf {
           def demultiplexer_logs_output = "${prefix}${state.demultiplexer_logs_workflow}"
           // The name of the output file for the run information is determined by the input file name.
           def run_information_output_1 = "${prefix}${state.output_run_information.getName()}"
+          def demultiplex_params_output = "${prefix}${state.demultiplex_params.getName()}"
 
           println("Publishing to ${publish_dir}/${prefix}")
           [
@@ -78,11 +146,13 @@ workflow run_wf {
             input_multiqc: state.multiqc_output,
             input_run_information: state.output_run_information,
             input_demultiplexer_logs: state.demultiplexer_logs,
+            input_demultiplex_params: state.demultiplex_params,
             output: fastq_output_1,
             output_sample_qc: sample_qc_output_1,
             output_multiqc: multiqc_output_1,
             output_run_information: run_information_output_1,
             output_demultiplexer_logs: demultiplexer_logs_output,
+            output_demultiplex_params: demultiplex_params_output,
           ]
         },
         toState: { id, result, state -> [ 
@@ -96,6 +166,7 @@ workflow run_wf {
             "multiqc_output": state.multiqc_output,
             "sample_qc_output": result.output_sample_qc,
             "demultiplexer_logs": state.demultiplexer_logs,
+            "demultiplex_params": state.demultiplex_params,
           ]
         },
         directives: [
