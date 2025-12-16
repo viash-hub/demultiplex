@@ -14,3 +14,19 @@ nextflow run . \
   -profile docker,local \
   -c src/config/labels.config \
   -resume
+
+nextflow run . \
+  -main-script src/runner/test.nf \
+  -entry test_multiple_runs \
+  -profile docker,local \
+  -c src/config/labels.config \
+  -resume
+
+
+nextflow run . \
+  -main-script src/runner/test.nf \
+  -entry test_empty_channel \
+  -profile docker,local \
+  -c src/config/labels.config \
+  -resume
+
