@@ -2,11 +2,11 @@
 
 ## New features 
 
-* Allow processing multiple inputs with one workflow run (PR #). 
+* Allow processing multiple inputs with one workflow run (PR #76). 
 
 ## Bug fixes
 
-* Avoid errors when the input channel is empty. This is useful when the workflow is used as a subworkflow (PR #). 
+* Avoid errors when the input channel is empty. This is useful when the workflow is used as a subworkflow (PR #76). 
 
 # demultiplex v0.7.0
 
