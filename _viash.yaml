@@ -8,7 +8,7 @@ links:
   repository: https://github.com/viash-hub/demultiplex
 info:
   test_resources:
-    - path: gs://viash-hub-resources/demultiplex/v4
+    - path: gs://viash-hub-resources/demultiplex/v5
       dest: testData
 
 viash_version: 0.9.4
