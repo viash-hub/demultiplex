@@ -13,6 +13,6 @@ echo ">>> Created temporary directory '$TMPDIR'."
 
 echo ">>> Run simple execution"
 ./$meta_functionality_name \
-   --input "$meta_resources_dir/iseq-DI" \
+   --input "$meta_resources_dir/SingleCell-RNA_P3_2" \
    --output_run_summary "$TMPDIR/run_summary.csv" \
    --output_index_summary "$TMPDIR/index_summary.csv"

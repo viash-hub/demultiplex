@@ -25,7 +25,7 @@ resources:
 test_resources:
   - type: bash_script
     path: test.sh
-  - path: /testData/iseq-DI
+  - path: /testData/SingleCell-RNA_P3_2
 engines:
   - type: docker
     image: debian:stable-slim

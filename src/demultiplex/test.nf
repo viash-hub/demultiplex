@@ -121,9 +121,9 @@ workflow test_no_index {
   // and the "Undetermined" should be empty
   output_ch = Channel.fromList([
         [
-          input: params.resources_test + "demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2",
+          input: params.resources_test + "SingleCell-RNA_P3_2",
           demultiplexer: "bclconvert",
-          run_information: params.resources_test + "demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2/SampleSheetNoIndex.csv" 
+          run_information: params.resources_test + "SingleCell-RNA_P3_2/SampleSheetNoIndex.csv" 
         ]
       ])
     | map { state -> [ "run", state ] }
