@@ -64,6 +64,11 @@ argument_groups:
         description: |
           Disable the check for the presence of a "CopyComplete.txt" file in input
           directory in case of Illumina data.
+      - name: --skip_publishing
+        type: boolean
+        default: false
+        description: |
+          Skip publishing of results to the specified output directory.
 resources:
   - type: nextflow_script
     path: main.nf
@@ -79,6 +84,9 @@ test_resources:
   - type: nextflow_script
     path: test.nf
     entrypoint: test_empty_channel
+  - type: nextflow_script
+    path: test.nf
+    entrypoint: test_skip_publishing
 
 dependencies:
   - name: demultiplex

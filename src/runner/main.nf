@@ -129,31 +129,52 @@ workflow run_wf {
       }
       | publish.run(
         fromState: { id, state ->
-          def prefix = state.prefix
-          // These output names are determined by arguments.
-          def fastq_output_1 = "${prefix}${state.fastq_output_workflow}"
-          def sample_qc_output_1 = "${prefix}${state.sample_qc_output_workflow}"
-          def multiqc_output_1 = "${prefix}${state.multiqc_output_workflow}"
-          def demultiplexer_logs_output = "${prefix}${state.demultiplexer_logs_workflow}"
-          // The name of the output file for the run information is determined by the input file name.
-          def run_information_output_1 = "${prefix}${state.output_run_information.getName()}"
-          def demultiplex_params_output = "${prefix}${state.demultiplex_params.getName()}"
+          // When skipping, use input paths directly to avoid creating publish structure
+          if (state.skip_publishing) {
+            println("Skipping publishing for ${id} - using work directory paths")
+            [
+              input: state.output,
+              input_sample_qc: state.output_sample_qc,
+              input_multiqc: state.multiqc_output,
+              input_run_information: state.output_run_information,
+              input_demultiplexer_logs: state.demultiplexer_logs,
+              input_demultiplex_params: state.demultiplex_params,
+              output: state.output,
+              output_sample_qc: state.sample_qc_output_workflow,
+              output_multiqc: state.multiqc_output,
+              output_run_information: state.output_run_information,
+              output_demultiplexer_logs: state.demultiplexer_logs,
+              output_demultiplex_params: state.demultiplex_params,
+              skip: true,
+            ]
+          } else {
+            def prefix = state.prefix
+            // These output names are determined by arguments.
+            def fastq_output_1 = "${prefix}${state.fastq_output_workflow}"
+            def sample_qc_output_1 = "${prefix}${state.sample_qc_output_workflow}"
+            def multiqc_output_1 = "${prefix}${state.multiqc_output_workflow}"
+            def demultiplexer_logs_output = "${prefix}${state.demultiplexer_logs_workflow}"
+            // The name of the output file for the run information is determined by the input file name.
+            def run_information_output_1 = "${prefix}${state.output_run_information.getName()}"
+            def demultiplex_params_output = "${prefix}${state.demultiplex_params.getName()}"
 
-          println("Publishing to ${publish_dir}/${prefix}")
-          [
-            input: state.output,
-            input_sample_qc: state.output_sample_qc,
-            input_multiqc: state.multiqc_output,
-            input_run_information: state.output_run_information,
-            input_demultiplexer_logs: state.demultiplexer_logs,
-            input_demultiplex_params: state.demultiplex_params,
-            output: fastq_output_1,
-            output_sample_qc: sample_qc_output_1,
-            output_multiqc: multiqc_output_1,
-            output_run_information: run_information_output_1,
-            output_demultiplexer_logs: demultiplexer_logs_output,
-            output_demultiplex_params: demultiplex_params_output,
-          ]
+            println("Publishing to ${publish_dir}/${prefix}")
+            [
+              input: state.output,
+              input_sample_qc: state.output_sample_qc,
+              input_multiqc: state.multiqc_output,
+              input_run_information: state.output_run_information,
+              input_demultiplexer_logs: state.demultiplexer_logs,
+              input_demultiplex_params: state.demultiplex_params,
+              output: fastq_output_1,
+              output_sample_qc: sample_qc_output_1,
+              output_multiqc: multiqc_output_1,
+              output_run_information: run_information_output_1,
+              output_demultiplexer_logs: demultiplexer_logs_output,
+              output_demultiplex_params: demultiplex_params_output,
+              skip: false,
+            ]
+          }
         },
         toState: { id, result, state -> [ 
             // Most of the output is copied from the input state
@@ -167,15 +188,9 @@ workflow run_wf {
             "sample_qc_output": result.output_sample_qc,
             "demultiplexer_logs": state.demultiplexer_logs,
             "demultiplex_params": state.demultiplex_params,
+            "skip_publishing": state.skip_publishing,
           ]
-        },
-        directives: [
-          publishDir: [
-            path: publish_dir,
-            overwrite: false,
-            mode: "copy"
-          ]
-        ]
+        }
       )
 
 has_published = new AtomicBoolean(false)
@@ -256,9 +271,13 @@ await_ch = output_ch
   }
   | flatMap { events ->
       events.each { id, state ->
-        println("Creating transfer_complete.txt file for ${state.prefix}.")
-        def complete_file = file("${params.publish_dir}/${state.prefix}/transfer_completed.txt")
-        complete_file.text = "" // This will create a file when it does not exist.
+        if (!state.skip_publishing) {
+          println("Creating transfer_complete.txt file for ${state.prefix}.")
+          def complete_file = file("${params.publish_dir}/${state.prefix}/transfer_completed.txt")
+          complete_file.text = "" // This will create a file when it does not exist.
+        } else {
+          println("Skipping transfer_completed.txt creation for ${id} (skip_publishing is true).")
+        }
       }
       events
   }
@@ -268,6 +287,8 @@ await_ch = output_ch
     "sample_qc_output",
     "demultiplexer_logs"
   ])
+
+  | view()
 
 
   emit:

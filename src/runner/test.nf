@@ -150,3 +150,45 @@ workflow test_empty_channel {
 }
 
 
+workflow test_skip_publishing {
+    output_ch = Channel.fromList([
+        [
+          id: "test_skip",
+          input: params.resources_test + "200624_A00834_0183_BHMTFYDRXX.tar.gz",
+          skip_publishing: true,
+        ]
+    ])
+    | map {event -> [event.id, event] }
+    | runner.run(
+        fromState: {id, state -> state }
+    )
+    
+    all_events_ch = output_ch
+      | toSortedList()
+      | map{states ->
+        assert states.size() == 1
+      }
+
+    output_ch 
+      | map {id, state ->
+        assert id == "test_skip"
+        // Verify output state is still valid
+        assert state.fastq_output.isDirectory()
+        assert state.sample_qc_output.isDirectory()
+        assert state.multiqc_output.isFile()
+        assert state.demultiplexer_logs.isDirectory()
+      }
+
+    workflow.onComplete = {
+        try {
+            // Verify nothing was published
+            def publish_subdir = file("${params.publish_dir}/test_skip")
+            assert !publish_subdir.exists() : "Expected publish_dir/test_skip to not exist when skip_publishing is true"
+        } catch (Exception e) {
+            throw new WorkflowScriptErrorException("Integration test for skip_publishing failed!", e)
+        }
+    }
+
+}
+
+

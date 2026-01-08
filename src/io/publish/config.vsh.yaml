@@ -27,6 +27,14 @@ argument_groups:
       - name: "--input_demultiplex_params"
         type: file
         required: true
+  - name: Options
+    arguments:
+      - name: --skip
+        type: boolean
+        default: false
+        description: |
+          Skip the final publishing (copying to publish_dir). Still consolidates 
+          QC outputs but keeps everything in work directory.
   - name: Output arguments
     arguments:
       - name: --output

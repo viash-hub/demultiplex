@@ -30,3 +30,10 @@ nextflow run . \
   -c src/config/labels.config \
   -resume
 
+
+nextflow run . \
+  -main-script src/runner/test.nf \
+  -entry test_skip_publishing \
+  -profile docker,local \
+  -c src/config/labels.config \
+  --publish_dir output_test
