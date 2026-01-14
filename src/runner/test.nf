@@ -181,9 +181,25 @@ workflow test_skip_publishing {
 
     workflow.onComplete = {
         try {
-            // Verify nothing was published
-            def publish_subdir = file("${params.publish_dir}/test_skip")
-            assert !publish_subdir.exists() : "Expected publish_dir/test_skip to not exist when skip_publishing is true"
+            // Verify publishing happened (except fastqs are skipped)
+            def test_skip_dir = file("${params.publish_dir}/test_skip")
+            assert test_skip_dir.isDirectory() 
+            def all_files = test_skip_dir.listFiles()
+            assert all_files.size() == 1
+            def publish_dir = file(all_files[0])
+
+            def published_items = publish_dir.listFiles()
+            // Expect everything EXCEPT "fastq"
+            assert published_items.collect{it.name}.toSet() == ["demultiplexer_logs", "qc", "SampleSheet.csv", "params.yaml", "transfer_completed.txt"].toSet()
+
+            assert publish_dir.resolve("qc/multiqc_report.html").exists()
+
+            // Verify FASTQ directory does NOT exist
+            assert !publish_dir.resolve("fastq").exists()
+            
+            assert publish_dir.resolve("SampleSheet.csv").exists()
+            assert publish_dir.resolve("transfer_completed.txt").exists()
+
         } catch (Exception e) {
             throw new WorkflowScriptErrorException("Integration test for skip_publishing failed!", e)
         }
