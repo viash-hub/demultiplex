@@ -10,6 +10,8 @@
 
 * Allow processing multiple inputs with one workflow run (PR #76). 
 
+* Allow skipping output FASTQs publishing in the `runner` workflow (PR #78). 
+
 ## Bug fixes
 
 * Avoid errors when the input channel is empty. This is useful when the workflow is used as a subworkflow (PR #76). 
