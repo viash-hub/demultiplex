@@ -6,7 +6,7 @@
 
 ## Major changes
 
-* Bump `biobox` to `v0.5.0`, which upgrades `bases2fastq` to `2.4.0` (PR #).
+* Bump `biobox` to `v0.5.0`, which upgrades `bases2fastq` to `2.4.0` (PR #79).
 
 # demultiplex v0.8.0
 
