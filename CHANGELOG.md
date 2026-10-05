@@ -4,6 +4,10 @@
 
 * Add `utils/save_params` to the `workflows/runner`, tracking input parameters and workflow dependencies in a YAML file (PR #75).
 
+## Major changes
+
+* Bump `biobox` to `v0.5.0`, which upgrades `bases2fastq` to `2.4.0` (PR #).
+
 # demultiplex v0.8.0
 
 ## New features 
