@@ -3,6 +3,11 @@ description: Runner for demultiplexing of raw sequencing data
 argument_groups:
   - name: Input arguments
     arguments:
+      - name: "--id"
+        type: string
+        required: true
+        description: |
+          ID for the run. Will be used as part of the output directory structure.
       - name: --input
         description: |
           Base directory of the canonical form `s3://<bucket>/<path>/<RunID>/`.
