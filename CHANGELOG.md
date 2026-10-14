@@ -2,7 +2,7 @@
 
 ## Bug fixes
 
-* `runner`: make sure `id` is a required argument PR (#)
+* `runner`: make sure `id` is a required argument PR (#80).
 
 ## New functionality
 
