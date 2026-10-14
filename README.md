@@ -30,10 +30,10 @@ stand-alone modules with a standardized interface.
 The full workflow can be run in two ways:
 
 1.  Run the [main
-    workflow](https://www.viash-hub.com/packages/demultiplex/v0.3.4/components/demultiplex)
+    workflow](https://www.viash-hub.com/packages/demultiplex/v0.9.0/components/demultiplex)
     containing the main functionality.
 2.  Run the [(opinianated)
-    `runner`](https://www.viash-hub.com/packages/demultiplex/v0.3.4/components/runner)
+    `runner`](https://www.viash-hub.com/packages/demultiplex/v0.9.0/components/runner)
     where a number of choices (input/output structure and location) have
     been made.
 
@@ -87,7 +87,7 @@ following:
 
 1.  Open [Viash Hub](https://www.viash-hub.com) and browse to the
     [demultiplex
-    component](https://www.viash-hub.com/packages/demultiplex/v0.3.4/components/demultiplex).
+    component](https://www.viash-hub.com/packages/demultiplex/v0.9.0/components/demultiplex).
     Press the ‘Launch’ button and follow the instructions.
 
 ![](assets/demultiplex-launch-small.png)
@@ -153,7 +153,7 @@ workflow:
 ``` bash
 nextflow run \
 vsh/demultiplex \
--r v0.3.11 \
+-r v0.9.0 \
 --help
 ```
 
@@ -165,7 +165,7 @@ instance using the following:
 
 ``` bash
  nextflow run vsh/demultiplex \
-  -revision v0.3.11 \
+  -revision v0.9.0 \
   -main-script target/nextflow/workflows/runner/main.nf \
   --help
 ```
@@ -175,7 +175,7 @@ command:
 
 ``` bash
 nextflow run vsh/demultiplex \
--r v0.3.11 \
+-r v0.9.0 \
 -main-script target/nextflow/runner/main.nf \
 --input "gs://viash-hub-resources/demultiplex/v3/demultiplex_htrnaseq_meta/SingleCell-RNA_P3_2"  \
 --demultiplexer bclconvert \
