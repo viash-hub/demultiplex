@@ -1,5 +1,9 @@
 # demultiplex vx.x.x
 
+## Bug fixes
+
+* `runner`: make sure `id` is a required argument (PR #80).
+
 ## New functionality
 
 * Add `utils/save_params` to the `workflows/runner`, tracking input parameters and workflow dependencies in a YAML file (PR #75).
