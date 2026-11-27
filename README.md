@@ -13,7 +13,7 @@ License](https://img.shields.io/github/license/viash-hub/demultiplex.svg)](https
 [![GitHub
 Issues](https://img.shields.io/github/issues/viash-hub/demultiplex.svg)](https://github.com/viash-hub/demultiplex/issues)
 [![Viash
-version](https://img.shields.io/badge/Viash-v0.9.4-blue)](https://viash.io)
+version](https://img.shields.io/badge/Viash-v0.9.7-blue)](https://viash.io)
 
 ## Introcuction
 

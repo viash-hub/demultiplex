@@ -11,7 +11,7 @@ info:
     - path: gs://viash-hub-resources/demultiplex/v5
       dest: testData
 
-viash_version: 0.9.4
+viash_version: 0.9.7
 
 config_mods: |
   .requirements.commands += ['ps']
