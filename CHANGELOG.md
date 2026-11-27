@@ -1,3 +1,13 @@
+# demultiplex v0.9.1
+
+## Bug fixes
+
+* `runner`: exit cleanly when the run is aborted or cancelled while waiting for publishing to finish. Previously, Nextflow's `last()` operator emitted `null` in this case, which raised a misleading `NullPointerException` and could create `transfer_completed.txt` for an incomplete transfer (PR #83).
+
+## Minor changes
+
+* Bump `viash` to 0.9.7 (PR #84).
+
 # demultiplex v0.9.0
 
 ## Bug fixes
