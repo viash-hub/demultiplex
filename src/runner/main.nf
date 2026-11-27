@@ -178,7 +178,7 @@ workflow run_wf {
         ]
       )
 
-has_published = new AtomicBoolean(false)
+def has_published = new AtomicBoolean(false)
 
 interval_ch = channel.interval('10s'){ i ->
   // Allow this channel to stop generating events based on a later signal
@@ -247,7 +247,7 @@ await_ch = output_ch
   // Filter out the events in case there was nothing to publish.
   // This could have been done before 'last', but it does something 
   // weird where it outputs a 'null' value event when the channel is empty.
-  | filter {event -> event.size() != 2 || event[0] != null}
+  | filter {event -> event != null && !session.aborted && !!session.cancelled && event.size() != 2 || event[0] != null}
   | map{ event ->
       // Signal to interval channel to stop generating events.
       has_published.compareAndSet(false, true)
